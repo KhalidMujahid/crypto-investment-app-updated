@@ -58,6 +58,7 @@ router.get('/transactions', ensureAuth, async (req, res) => {
       user: req.user,
       transactions,
       currentPage: page,
+      total: total,
       totalPages: Math.ceil(total / limit),
       title: 'Transactions'
     });

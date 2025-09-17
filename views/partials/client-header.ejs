@@ -1,127 +1,145 @@
-<header class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
+<header class="bg-white dark:bg-gray-900 shadow-md sticky top-0 z-50 transition-colors duration-300">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between h-16">
-      <div class="flex">
-        <div class="flex-shrink-0 flex items-center">
-          <a href="/client/dashboard" class="text-xl font-bold text-crypto-blue">CryptoInvest</a>
-        </div>
-        <nav class="hidden sm:ml-6 sm:flex sm:space-x-8">
-          <a href="/client/dashboard" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium dark:text-gray-300 dark:hover:text-white">Dashboard</a>
-          <a href="/client/portfolio" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium dark:text-gray-300 dark:hover:text-white">Portfolio</a>
-          <a href="/client/transactions" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium dark:text-gray-300 dark:hover:text-white">Transactions</a>
-          <a href="/client/deposit" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium dark:text-gray-300 dark:hover:text-white">Deposit</a>
-          <a href="/client/withdraw" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium dark:text-gray-300 dark:hover:text-white">Withdraw</a>
-        </nav>
+    <div class="flex justify-between h-16 items-center">
+      <!-- Logo -->
+      <div class="flex items-center">
+        <a href="/client/dashboard" class="text-2xl font-bold text-crypto-blue tracking-wide hover:opacity-80 transition">
+          CryptoInvest
+        </a>
       </div>
-      <div class="hidden sm:ml-6 sm:flex sm:items-center">
-        <div class="ml-3 relative" x-data="{ open: false }">
-          <div class="relative" x-data="{ notificationsOpen: false }">
-            <button @click="notificationsOpen = !notificationsOpen" class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-crypto-blue dark:hover:text-gray-300">
-              <span class="sr-only">View notifications</span>
-              <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
-              <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-400"></span>
-            </button>
-            
-            <div x-show="notificationsOpen" @click.away="notificationsOpen = false" 
-                 class="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800 dark:ring-gray-700 z-50" 
-                 style="display: none;">
-              <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-sm font-medium text-gray-900 dark:text-white">Notifications</h3>
-              </div>
-              <div class="max-h-60 overflow-y-auto" id="notifications-list">
-                <!-- Notifications will be loaded via JavaScript -->
-                <div class="px-4 py-3 text-center text-gray-500 dark:text-gray-400">
-                  Loading notifications...
-                </div>
-              </div>
-              <a href="/client/notifications" class="block px-4 py-2 text-sm text-crypto-blue hover:bg-gray-100 dark:hover:bg-gray-700 text-center border-t border-gray-200 dark:border-gray-700">
-                View all notifications
-              </a>
-            </div>
-          </div>
 
-          <!-- Profile dropdown -->
-          <button @click="open = !open" class="max-w-xs flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-crypto-blue ml-4">
-            <span class="sr-only">Open user menu</span>
-            <div class="h-8 w-8 rounded-full bg-crypto-blue flex items-center justify-center text-white font-bold">
+      <!-- Desktop Nav -->
+      <nav class="hidden sm:flex space-x-6">
+        <% const links = [
+          { name: "Dashboard", href: "/client/dashboard" },
+          { name: "Portfolio", href: "/client/portfolio" },
+          { name: "Transactions", href: "/client/transactions" },
+          { name: "Deposit", href: "/client/deposit" },
+          { name: "Withdraw", href: "/client/withdraw" },
+        ]; %>
+
+        <% links.forEach(link => { %>
+          <a href="<%= link.href %>" 
+             class="relative text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-crypto-blue transition-colors 
+                    after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-crypto-blue after:transition-all after:duration-300 hover:after:w-full">
+            <%= link.name %>
+          </a>
+        <% }); %>
+      </nav>
+
+      <!-- Right Side -->
+      <div class="flex items-center space-x-4">
+        <!-- Notifications -->
+        <div x-data="{ open: false }" class="relative">
+          <button @click="open = !open" class="p-2 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-crypto-blue">
+            <span class="sr-only">View notifications</span>
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M15 17h5l-1.405-1.405A2.03 2.03 0 0118 14.16V11a6 6 0 00-4-5.66V5a2 2 0 10-4 0v.34A6 6 0 006 11v3.16c0 .54-.21 1.05-.59 1.44L4 17h5m6 0v1a3 3 0 11-6 0v-1" />
+            </svg>
+            <span class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
+          </button>
+
+          <!-- Dropdown -->
+          <div x-show="open" @click.away="open = false"
+               x-transition
+               class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 shadow-lg rounded-md overflow-hidden ring-1 ring-gray-200 dark:ring-gray-700 z-50">
+            <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+              <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-100">Notifications</h3>
+            </div>
+            <div class="max-h-64 overflow-y-auto" id="notifications-list">
+              <div class="px-4 py-3 text-center text-gray-500 dark:text-gray-400">Loading...</div>
+            </div>
+            <a href="/client/notifications" class="block px-4 py-2 text-sm text-center font-medium text-crypto-blue hover:bg-gray-100 dark:hover:bg-gray-700">
+              View all
+            </a>
+          </div>
+        </div>
+
+        <!-- Profile -->
+        <div x-data="{ open: false }" class="relative">
+          <button @click="open = !open" class="flex items-center focus:outline-none">
+            <div class="h-9 w-9 rounded-full bg-crypto-blue flex items-center justify-center text-white font-bold">
               <%= user.firstName.charAt(0) %><%= user.lastName.charAt(0) %>
             </div>
           </button>
-          
-          <div x-show="open" @click.away="open = false" 
-               class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800 dark:ring-gray-700 z-50" 
-               style="display: none;">
-            <a href="/client/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Your Profile</a>
-            <a href="/client/notifications" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Notifications</a>
-            <a href="/logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Sign out</a>
+
+          <!-- Dropdown -->
+          <div x-show="open" @click.away="open = false"
+               x-transition
+               class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md overflow-hidden ring-1 ring-gray-200 dark:ring-gray-700 z-50">
+            <a href="/client/profile" class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Your Profile</a>
+            <a href="/client/notifications" class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Notifications</a>
+            <a href="/logout" class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700">Sign out</a>
           </div>
         </div>
-      </div>
-      
-      <div class="flex items-center sm:hidden">
-        <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-crypto-blue dark:hover:bg-gray-700" aria-expanded="false">
-          <span class="sr-only">Open main menu</span>
-          <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="sm:hidden p-2 rounded-md text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-2 focus:ring-crypto-blue">
+          <span class="sr-only">Open menu</span>
+          <svg id="menu-icon" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
           </svg>
         </button>
       </div>
     </div>
   </div>
 
-  <div class="sm:hidden hidden" id="mobile-menu">
-    <div class="pt-2 pb-3 space-y-1">
-      <a href="/client/dashboard" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Dashboard</a>
-      <a href="/client/portfolio" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Portfolio</a>
-      <a href="/client/transactions" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Transactions</a>
-      <a href="/client/deposit" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Deposit</a>
-      <a href="/client/withdraw" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Withdraw</a>
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden sm:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+    <div class="px-4 py-3 space-y-2">
+      <% links.forEach(link => { %>
+        <a href="<%= link.href %>" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-crypto-blue">
+          <%= link.name %>
+        </a>
+      <% }); %>
     </div>
-    <div class="pt-4 pb-3 border-t border-gray-200 dark:border-gray-700">
-      <div class="flex items-center px-4">
-        <div class="flex-shrink-0">
-          <div class="h-10 w-10 rounded-full bg-crypto-blue flex items-center justify-center text-white font-bold">
-            <%= user.firstName.charAt(0) %><%= user.lastName.charAt(0) %>
-          </div>
+    <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-3">
+      <div class="flex items-center space-x-3">
+        <div class="h-10 w-10 rounded-full bg-crypto-blue flex items-center justify-center text-white font-bold">
+          <%= user.firstName.charAt(0) %><%= user.lastName.charAt(0) %>
         </div>
-        <div class="ml-3">
-          <div class="text-base font-medium text-gray-800 dark:text-white"><%= user.firstName %> <%= user.lastName %></div>
-          <div class="text-sm font-medium text-gray-500 dark:text-gray-400"><%= user.email %></div>
+        <div>
+          <p class="text-base font-medium text-gray-900 dark:text-white"><%= user.firstName %> <%= user.lastName %></p>
+          <p class="text-sm text-gray-500 dark:text-gray-400"><%= user.email %></p>
         </div>
       </div>
       <div class="mt-3 space-y-1">
-        <a href="/client/profile" class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Your Profile</a>
-        <a href="/client/notifications" class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Notifications</a>
-        <a href="/logout" class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Sign out</a>
+        <a href="/client/profile" class="block px-3 py-2 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-800">Your Profile</a>
+        <a href="/client/notifications" class="block px-3 py-2 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-800">Notifications</a>
+        <a href="/logout" class="block px-3 py-2 rounded-md text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800">Sign out</a>
       </div>
     </div>
   </div>
 </header>
 
 <script>
+  // Mobile menu toggle
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  mobileMenuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+  });
+
+  // Load notifications dynamically
   document.addEventListener('DOMContentLoaded', function() {
     fetch('/client/notifications/data')
-      .then(response => response.json())
+      .then(res => res.json())
       .then(notifications => {
         const container = document.getElementById('notifications-list');
-        
-        if (notifications.length === 0) {
+        if (!notifications.length) {
           container.innerHTML = '<div class="px-4 py-3 text-center text-gray-500 dark:text-gray-400">No notifications</div>';
           return;
         }
-        
-        container.innerHTML = notifications.map(notif => `
-          <a href="#" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-700 ${notif.read ? '' : 'bg-blue-50 dark:bg-blue-900/20'}">
-            <div class="font-medium">${notif.title}</div>
-            <div class="text-gray-500 dark:text-gray-400 mt-1">${notif.message}</div>
-            <div class="text-xs text-gray-400 dark:text-gray-500 mt-1">${new Date(notif.createdAt).toLocaleString()}</div>
+        container.innerHTML = notifications.map(n => `
+          <a href="#" class="block px-4 py-3 text-sm border-b border-gray-200 dark:border-gray-700 ${n.read ? '' : 'bg-blue-50 dark:bg-blue-900/30'} hover:bg-gray-50 dark:hover:bg-gray-700">
+            <div class="font-medium">${n.title}</div>
+            <div class="text-gray-500 dark:text-gray-400">${n.message}</div>
+            <div class="text-xs text-gray-400 dark:text-gray-500 mt-1">${new Date(n.createdAt).toLocaleString()}</div>
           </a>
         `).join('');
       })
-      .catch(error => {
-        console.error('Error loading notifications:', error);
+      .catch(() => {
         document.getElementById('notifications-list').innerHTML = '<div class="px-4 py-3 text-center text-gray-500 dark:text-gray-400">Error loading notifications</div>';
       });
   });
