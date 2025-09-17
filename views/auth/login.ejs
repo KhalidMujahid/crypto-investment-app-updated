@@ -1,62 +1,135 @@
 <%- include('../partials/head', {title: title}) %>
 
-<body class="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-md w-full space-y-8 glassmorphism rounded-2xl p-8">
-    <div>
-      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-        Sign in to your account
-      </h2>
-      <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-        Or
-        <a href="/register" class="font-medium text-crypto-blue hover:text-blue-500">
-          create a new account
-        </a>
-      </p>
-    </div>
-    <form class="mt-8 space-y-6" action="/login" method="POST">
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full">
+    <div class="backdrop-blur-xl bg-white/30 dark:bg-gray-800/30 shadow-2xl rounded-2xl p-8 border border-gray-200/40 dark:border-gray-700/40 animate-fade-in">
+      <!-- Header -->
+      <div class="text-center">
+        <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+          Welcome back
+        </h2>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          Don't have an account?
+          <a href="/register" class="font-medium text-crypto-blue hover:text-blue-500 transition-colors">
+            Sign up
+          </a>
+        </p>
+      </div>
+
+      <!-- Error Alert -->
       <% if (typeof error !== 'undefined') { %>
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-          <span class="block sm:inline"><%= error %></span>
+        <div class="mt-6 flex items-center gap-2 text-sm bg-red-50 dark:bg-red-900/40 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded-md animate-shake">
+          <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10c0 4.418-3.582 8-8 8s-8-3.582-8-8 
+              3.582-8 8-8 8 3.582 8 8zm-7 4a1 1 0 11-2 
+              0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 
+              1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          <span><%= error %></span>
         </div>
       <% } %>
-      <div class="rounded-md shadow-sm -space-y-px">
-        <div>
-          <label for="email" class="sr-only">Email address</label>
-          <input id="email" name="email" type="email" autocomplete="email" required 
-                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                 placeholder="Email address" value="<%= typeof email !== 'undefined' ? email : '' %>">
-        </div>
-        <div>
-          <label for="password" class="sr-only">Password</label>
-          <input id="password" name="password" type="password" autocomplete="current-password" required 
-                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                 placeholder="Password">
-        </div>
-      </div>
 
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <input id="remember-me" name="remember-me" type="checkbox" 
-                 class="h-4 w-4 text-crypto-blue focus:ring-blue-500 border-gray-300 rounded">
-          <label for="remember-me" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">
-            Remember me
+      <!-- Form -->
+      <form class="mt-8 space-y-6" action="/login" method="POST">
+        <div class="space-y-4">
+          <!-- Email -->
+          <div class="relative">
+            <label for="email" class="sr-only">Email address</label>
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.94 6.34a2 2 0 011.44-.59h11.24a2 2 
+                         0 011.44.59l-7.06 5.71-7.06-5.71z"/>
+                <path d="M18 8.67v6.66A2 2 0 0116 17H4a2 2 
+                         0 01-2-2V8.67l7.06 5.71a2 2 0 002.88 
+                         0L18 8.67z"/>
+              </svg>
+            </span>
+            <input id="email" name="email" type="email" autocomplete="email" required
+                   class="pl-10 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white placeholder-gray-400 focus:ring-crypto-blue focus:border-crypto-blue sm:text-sm"
+                   placeholder="Email address"
+                   value="<%= typeof email !== 'undefined' ? email : '' %>">
+          </div>
+
+          <!-- Password -->
+          <div class="relative">
+            <label for="password" class="sr-only">Password</label>
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5 8a5 5 0 
+                      1110 0v2h1a1 1 0 011 1v7a1 1 
+                      0 01-1 1H4a1 1 0 01-1-1v-7a1 
+                      1 0 011-1h1V8zm8 0v2H7V8a3 
+                      3 0 016 0z" clip-rule="evenodd"/>
+              </svg>
+            </span>
+            <input id="password" name="password" type="password" autocomplete="current-password" required
+                   class="pl-10 pr-10 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white placeholder-gray-400 focus:ring-crypto-blue focus:border-crypto-blue sm:text-sm"
+                   placeholder="Password">
+            <!-- Toggle visibility -->
+            <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <svg id="password-toggle-icon" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path d="M2.458 12C3.732 7.943 7.522 5 
+                         12 5c4.478 0 8.268 2.943 
+                         9.542 7-1.274 4.057-5.064 7-9.542 
+                         7-4.478 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Options -->
+        <div class="flex items-center justify-between">
+          <label class="flex items-center text-sm text-gray-700 dark:text-gray-300">
+            <input id="remember-me" name="remember-me" type="checkbox"
+                   class="h-4 w-4 text-crypto-blue border-gray-300 rounded focus:ring-blue-500">
+            <span class="ml-2">Remember me</span>
           </label>
-        </div>
 
-        <div class="text-sm">
-          <a href="#" class="font-medium text-crypto-blue hover:text-blue-500">
-            Forgot your password?
+          <a href="#" class="text-sm font-medium text-crypto-blue hover:text-blue-500 transition-colors">
+            Forgot password?
           </a>
         </div>
-      </div>
 
-      <div>
-        <button type="submit" 
-                class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-crypto-blue hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+        <!-- Submit -->
+        <button type="submit"
+                class="relative w-full flex justify-center items-center py-3 px-4 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-crypto-blue to-blue-600 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-crypto-blue transition-all">
+          <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2.003 9.25C2.003 5.53 
+                       5.503 2 9.25 2s7.247 3.53 
+                       7.247 7.25c0 1.56-.52 3-1.397 
+                       4.166L9.25 18l-5.85-6.584A7.247 
+                       7.247 0 012.003 9.25z"/>
+            </svg>
+          </span>
           Sign in
         </button>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
+
+  <script>
+    function togglePassword() {
+      const input = document.getElementById("password");
+      const icon = document.getElementById("password-toggle-icon");
+      if (input.type === "password") {
+        input.type = "text";
+        icon.innerHTML = '<path d="M13.875 18.825A10.05 10.05 0 0112 
+            19c-4.478 0-8.268-2.943-9.542-7a9.96 
+            9.96 0 012.211-3.568M6.23 6.23A9.956 
+            9.956 0 0112 5c4.478 0 8.268 2.943 
+            9.542 7a9.956 9.956 0 01-4.293 5.043M15 
+            12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" />';
+      } else {
+        input.type = "password";
+        icon.innerHTML = '<path d="M15 12a3 3 0 11-6 0 
+            3 3 0 016 0z"/><path d="M2.458 12C3.732 
+            7.943 7.522 5 12 5c4.478 0 8.268 2.943 
+            9.542 7-1.274 4.057-5.064 7-9.542 
+            7-4.478 0-8.268-2.943-9.542-7z"/>';
+      }
+    }
+  </script>
 </body>
 </html>
