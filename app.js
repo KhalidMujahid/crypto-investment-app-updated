@@ -28,7 +28,6 @@ app.use(session({
 
 // View engine setup
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
 
 // Routes
 app.use('/', require('./routes/auth'));

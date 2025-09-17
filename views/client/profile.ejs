@@ -1,0 +1,243 @@
+<%- include('../partials/head', {title: title}) %>
+<%- include('../partials/client-header') %>
+
+<main class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Profile Settings</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Profile Form -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Personal Information -->
+            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Personal Information</h2>
+                
+                <form action="/client/profile" method="POST">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name</label>
+                            <input type="text" name="firstName" value="<%= user.firstName %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Name</label>
+                            <input type="text" name="lastName" value="<%= user.lastName %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                        <input type="email" name="email" value="<%= user.email %>" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Theme Preference</label>
+                        <select name="theme" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                            <option value="dark" <%= user.preferences.theme === 'dark' ? 'selected' : '' %>>Dark</option>
+                            <option value="light" <%= user.preferences.theme === 'light' ? 'selected' : '' %>>Light</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notifications</label>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="emailNotif" name="notifications" value="email" 
+                                       <%= user.preferences.notifications.email ? 'checked' : '' %> 
+                                       class="h-4 w-4 text-crypto-blue focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="emailNotif" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Email Notifications</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="pushNotif" name="notifications" value="push" 
+                                       <%= user.preferences.notifications.push ? 'checked' : '' %>
+                                       class="h-4 w-4 text-crypto-blue focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="pushNotif" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Push Notifications</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="priceNotif" name="notifications" value="priceAlerts" 
+                                       <%= user.preferences.notifications.priceAlerts ? 'checked' : '' %>
+                                       class="h-4 w-4 text-crypto-blue focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="priceNotif" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Price Alerts</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="bg-crypto-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                        Save Changes
+                    </button>
+                </form>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Security Settings</h2>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium text-gray-900 dark:text-white">Two-Factor Authentication</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Add an extra layer of security to your account</p>
+                        </div>
+                        <form action="/client/toggle-2fa" method="POST">
+                            <button type="submit" class="px-3 py-1 rounded-full text-xs font-medium <%= user.twoFactorEnabled ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                                <%= user.twoFactorEnabled ? 'Enabled' : 'Disabled' %>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium text-gray-900 dark:text-white">Login History</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">View your recent account activity</p>
+                        </div>
+                        <button class="text-crypto-blue hover:text-blue-600 text-sm font-medium">
+                            View History
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium text-gray-900 dark:text-white">Change Password</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Update your account password</p>
+                        </div>
+                        <button class="text-crypto-blue hover:text-blue-600 text-sm font-medium">
+                            Change Password
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KYC Verification -->
+            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">KYC Verification</h2>
+                
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="font-medium text-gray-900 dark:text-white">Identity Verification</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Verify your identity to unlock all features</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-medium 
+                        <%= user.kycStatus === 'verified' ? 'bg-green-100 text-green-800' : 
+                           user.kycStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                           'bg-gray-100 text-gray-800' %>">
+                        <%= user.kycStatus.charAt(0).toUpperCase() + user.kycStatus.slice(1) %>
+                    </span>
+                </div>
+
+                <% if (user.kycStatus !== 'verified') { %>
+                <form action="/client/kyc/upload" method="POST" enctype="multipart/form-data">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Document Type</label>
+                        <select name="documentType" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white" required>
+                            <option value="">Select Document Type</option>
+                            <option value="passport">Passport</option>
+                            <option value="id_card">National ID Card</option>
+                            <option value="drivers_license">Driver's License</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Upload Document</label>
+                        <div class="flex items-center justify-center w-full">
+                            <label for="document" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                    </svg>
+                                    <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">JPG, PNG, PDF (MAX. 5MB)</p>
+                                </div>
+                                <input id="document" name="document" type="file" class="hidden" required />
+                            </label>
+                        </div> 
+                    </div>
+
+                    <button type="submit" class="bg-crypto-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                        Submit Verification
+                    </button>
+                </form>
+                <% } else { %>
+                <div class="bg-green-100 dark:bg-green-900/30 border border-green-400 dark:border-green-600 p-4 rounded-lg">
+                    <p class="text-sm text-green-800 dark:text-green-200">
+                        Your identity has been successfully verified. You now have access to all platform features.
+                    </p>
+                </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Account Summary -->
+        <div class="space-y-6">
+            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Account Summary</h2>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Member Since</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400"><%= new Date(user.createdAt).toLocaleDateString() %></span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Account Tier</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Standard</span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Verification Level</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">
+                            <%= user.kycStatus === 'verified' ? 'Level 2' : 
+                               user.kycStatus === 'pending' ? 'Level 1 (Pending)' : 'Level 1' %>
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Referral Code</span>
+                        <span class="text-sm text-crypto-blue"><%= user.referralCode %></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Account Security</h2>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Last Login</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">
+                            <%= user.security.lastLogin ? new Date(user.security.lastLogin).toLocaleString() : 'Never' %>
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Login Location</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">
+                            <%= user.security.loginHistory.length > 0 ? user.security.loginHistory[0].location || 'Unknown' : 'Unknown' %>
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Active Sessions</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">1 Device</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Danger Zone</h2>
+                
+                <div class="space-y-4">
+                    <button class="w-full bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-800/50 transition-colors">
+                        Deactivate Account
+                    </button>
+                    <button class="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                        Delete Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>
