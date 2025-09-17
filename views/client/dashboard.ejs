@@ -1,71 +1,90 @@
 <%- include('../partials/head', {title: title}) %>
 <%- include('../partials/client-header') %>
 
-<main class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard Overview</h1>
-        <div class="flex space-x-4">
-            <button class="bg-crypto-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+<main class="container mx-auto px-4 py-10 space-y-10">
+    <div class="flex flex-col lg:flex-row justify-between items-center bg-gradient-to-r from-crypto-blue to-blue-600 rounded-2xl p-8 shadow-lg text-white">
+        <div>
+            <h1 class="text-3xl font-bold">Welcome back, <%= user.name %> 👋</h1>
+            <p class="mt-2 text-sm opacity-90">Here’s a quick look at your investments today.</p>
+        </div>
+        <div class="flex space-x-4 mt-6 lg:mt-0">
+            <button class="bg-white/20 backdrop-blur-lg px-5 py-2 rounded-lg hover:bg-white/30 transition">
                 Quick Deposit
             </button>
-            <button class="bg-crypto-green text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+            <button class="bg-green-500 px-5 py-2 rounded-lg hover:bg-green-600 transition">
                 Invest Now
             </button>
         </div>
     </div>
 
-    <!-- Portfolio Summary -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+    <!-- Portfolio Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Total Balance -->
+        <div class="glassmorphism rounded-2xl p-6 shadow-lg hover:shadow-xl transition">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200">Total Balance</h3>
-                <span class="text-2xl font-bold text-crypto-green">$<%= totalValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %></span>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Balance</h3>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">
+                        $<%= totalValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %>
+                    </p>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                    💰
+                </div>
             </div>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">+2.5% today</p>
+            <p class="text-sm text-green-600 mt-3">+2.5% today</p>
         </div>
 
-        <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+        <!-- Profit/Loss -->
+        <div class="glassmorphism rounded-2xl p-6 shadow-lg hover:shadow-xl transition">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200">Profit/Loss</h3>
-                <span class="text-2xl font-bold text-crypto-green">+$1,245.32</span>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Profit / Loss</h3>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">+$1,245.32</p>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                    📈
+                </div>
             </div>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">+8.2% all time</p>
+            <p class="text-sm text-blue-600 mt-3">+8.2% all time</p>
         </div>
 
-        <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+        <!-- Active Investments -->
+        <div class="glassmorphism rounded-2xl p-6 shadow-lg hover:shadow-xl transition">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200">Active Investments</h3>
-                <span class="text-2xl font-bold text-crypto-blue">4</span>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Active Investments</h3>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">4</p>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                    📊
+                </div>
             </div>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">2 staking, 2 auto-invest</p>
+            <p class="text-sm text-purple-600 mt-3">2 staking, 2 auto-invest</p>
         </div>
     </div>
 
-    <!-- Chart and Assets -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <!-- Performance Chart -->
-        <div class="glassmorphism rounded-2xl p-6 shadow-lg lg:col-span-1">
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="glassmorphism rounded-2xl p-6 shadow-lg">
             <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Portfolio Performance</h3>
             <canvas id="performanceChart" height="300"></canvas>
         </div>
-
-        <!-- Asset Distribution -->
-        <div class="glassmorphism rounded-2xl p-6 shadow-lg lg:col-span-1">
+        <div class="glassmorphism rounded-2xl p-6 shadow-lg">
             <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Asset Distribution</h3>
             <canvas id="assetChart" height="300"></canvas>
         </div>
     </div>
 
-    <!-- Recent Transactions -->
-    <div class="glassmorphism rounded-2xl p-6 shadow-lg mb-8">
+    <!-- Transactions Table -->
+    <div class="glassmorphism rounded-2xl p-6 shadow-lg">
         <div class="flex justify-between items-center mb-6">
             <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200">Recent Transactions</h3>
             <a href="/client/transactions" class="text-crypto-blue hover:underline">View All</a>
         </div>
-        
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead>
+                <thead class="bg-gray-50 dark:bg-gray-800">
                     <tr>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Asset</th>
@@ -76,8 +95,8 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     <% transactions.forEach(transaction => { %>
-                    <tr>
-                        <td class="px-4 py-3 whitespace-nowrap">
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                        <td class="px-4 py-3">
                             <span class="px-2 py-1 text-xs font-semibold rounded-full 
                                 <%= transaction.type === 'deposit' ? 'bg-green-100 text-green-800' : 
                                    transaction.type === 'withdrawal' ? 'bg-red-100 text-red-800' : 
@@ -85,13 +104,9 @@
                                 <%= transaction.type %>
                             </span>
                         </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                            <%= transaction.asset %>
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                            <%= transaction.amount %>
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap">
+                        <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100"><%= transaction.asset %></td>
+                        <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100"><%= transaction.amount %></td>
+                        <td class="px-4 py-3">
                             <span class="px-2 py-1 text-xs font-semibold rounded-full 
                                 <%= transaction.status === 'completed' ? 'bg-green-100 text-green-800' : 
                                    transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
@@ -99,7 +114,7 @@
                                 <%= transaction.status %>
                             </span>
                         </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                        <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
                             <%= new Date(transaction.createdAt).toLocaleDateString() %>
                         </td>
                     </tr>
@@ -109,125 +124,33 @@
         </div>
     </div>
 
-    <!-- Market Overview Widget -->
+    <!-- Market Overview -->
     <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Market Overview</h3>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-6">Market Overview</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <% const coins = [
+                {symbol: 'BTC', color: 'bg-yellow-500', price: '$41,235.67', change: '+2.4%'},
+                {symbol: 'ETH', color: 'bg-indigo-500', price: '$2,235.12', change: '+1.8%'},
+                {symbol: 'ADA', color: 'bg-red-500', price: '$0.98', change: '-0.7%'},
+                {symbol: 'DOT', color: 'bg-purple-500', price: '$19.24', change: '+3.2%'}
+            ]; %>
+            <% coins.forEach(c => { %>
+            <div class="p-4 rounded-xl shadow hover:shadow-lg transition bg-gray-100 dark:bg-gray-800">
                 <div class="flex items-center">
-                    <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center mr-3">
-                        <span class="text-white font-bold">B</span>
+                    <div class="w-10 h-10 <%= c.color %> rounded-full flex items-center justify-center text-white font-bold">
+                        <%= c.symbol[0] %>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">BTC</p>
-                        <p class="text-sm text-green-600">$41,235.67 <span class="text-xs">+2.4%</span></p>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white"><%= c.symbol %></p>
+                        <p class="text-sm <%= c.change.includes('+') ? 'text-green-600' : 'text-red-600' %>">
+                            <%= c.price %> <span class="text-xs"><%= c.change %></span>
+                        </p>
                     </div>
                 </div>
             </div>
-            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-                <div class="flex items-center">
-                    <div class="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center mr-3">
-                        <span class="text-white font-bold">E</span>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">ETH</p>
-                        <p class="text-sm text-green-600">$2,235.12 <span class="text-xs">+1.8%</span></p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-                <div class="flex items-center">
-                    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center mr-3">
-                        <span class="text-white font-bold">A</span>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">ADA</p>
-                        <p class="text-sm text-red-600">$0.98 <span class="text-xs">-0.7%</span></p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-                <div class="flex items-center">
-                    <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mr-3">
-                        <span class="text-white font-bold">D</span>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">DOT</p>
-                        <p class="text-sm text-green-600">$19.24 <span class="text-xs">+3.2%</span></p>
-                    </div>
-                </div>
-            </div>
+            <% }); %>
         </div>
     </div>
 </main>
-
-<script>
-    // Performance Chart
-    const performanceCtx = document.getElementById('performanceChart').getContext('2d');
-    new Chart(performanceCtx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            datasets: [{
-                label: 'Portfolio Value',
-                data: [12000, 19000, 15000, 25000, 22000, 30000, 28000, 33000, 38000, 42000, 45000, 48000],
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                borderWidth: 2,
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
-    });
-
-    // Asset Distribution Chart
-    const assetCtx = document.getElementById('assetChart').getContext('2d');
-    new Chart(assetCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Bitcoin', 'Ethereum', 'Cardano', 'Polkadot', 'Other'],
-            datasets: [{
-                data: [40, 25, 15, 12, 8],
-                backgroundColor: [
-                    '#f59e0b',
-                    '#4f46e5',
-                    '#10b981',
-                    '#8b5cf6',
-                    '#6b7280'
-                ],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'right'
-                }
-            }
-        }
-    });
-</script>
 
 <%- include('../partials/footer') %>
