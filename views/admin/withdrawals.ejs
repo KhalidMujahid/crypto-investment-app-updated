@@ -1,0 +1,171 @@
+<%- include('../partials/head', {title: title}) %>
+<%- include('../partials/admin-header') %>
+
+<main class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Withdrawal Requests</h1>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-yellow-500/10 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Pending Withdrawals</p>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white"><%= withdrawals.length %></h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-500/10 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Processed Today</p>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">8</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-500/10 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Volume</p>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">4.2 BTC</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-red-500/10 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Rejected Today</p>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">2</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdrawals Table -->
+    <div class="glassmorphism rounded-2xl p-6 shadow-lg mb-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Pending Withdrawal Requests</h2>
+            <div class="flex space-x-2">
+                <button class="bg-crypto-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                    Process All
+                </button>
+                <button class="bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors">
+                    Export CSV
+                </button>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">User</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Currency</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Amount</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Address</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Requested</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    <% withdrawals.forEach(withdrawal => { %>
+                    <tr>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-crypto-blue flex items-center justify-center text-white font-bold mr-3">
+                                    <%= withdrawal.user.firstName.charAt(0) %><%= withdrawal.user.lastName.charAt(0) %>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900 dark:text-white"><%= withdrawal.user.firstName %> <%= withdrawal.user.lastName %></div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400"><%= withdrawal.user.email %></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                            <%= withdrawal.asset %>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                            <%= withdrawal.amount %>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                            <span class="font-mono"><%= withdrawal.address.substring(0, 8) %>...<%= withdrawal.address.substring(withdrawal.address.length - 8) %></span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                            <%= new Date(withdrawal.createdAt).toLocaleDateString() %>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
+                            <div class="flex space-x-2">
+                                <form action="/admin/withdrawals/<%= withdrawal._id %>/process" method="POST" class="inline">
+                                    <input type="hidden" name="action" value="approve">
+                                    <button type="submit" class="text-green-600 hover:text-green-800">Approve</button>
+                                </form>
+                                <form action="/admin/withdrawals/<%= withdrawal._id %>/process" method="POST" class="inline">
+                                    <input type="hidden" name="action" value="reject">
+                                    <button type="submit" class="text-red-600 hover:text-red-800">Reject</button>
+                                </form>
+                                <a href="#" class="text-crypto-blue hover:text-blue-600">Details</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+        <% if (withdrawals.length === 0) { %>
+        <div class="text-center py-8">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No pending withdrawals</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">All withdrawal requests have been processed.</p>
+        </div>
+        <% } %>
+    </div>
+
+    <!-- Processing Guide -->
+    <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Withdrawal Processing Guide</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-green-100 dark:bg-green-900/30 p-4 rounded-lg">
+                <h3 class="font-medium text-green-800 dark:text-green-200 mb-2">Approve</h3>
+                <p class="text-sm text-green-700 dark:text-green-300">Approve legitimate withdrawal requests after verifying user identity and transaction details.</p>
+            </div>
+
+            <div class="bg-yellow-100 dark:bg-yellow-900/30 p-4 rounded-lg">
+                <h3 class="font-medium text-yellow-800 dark:text-yellow-200 mb-2">Hold</h3>
+                <p class="text-sm text-yellow-700 dark:text-yellow-300">Place suspicious transactions on hold for further investigation and user verification.</p>
+            </div>
+
+            <div class="bg-red-100 dark:bg-red-900/30 p-4 rounded-lg">
+                <h3 class="font-medium text-red-800 dark:text-red-200 mb-2">Reject</h3>
+                <p class="text-sm text-red-700 dark:text-red-300">Reject transactions that violate terms of service or appear fraudulent.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>
