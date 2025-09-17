@@ -78,7 +78,7 @@ router.post('/login', async (req, res) => {
 
 // Register page
 router.get('/register', (req, res) => {
-  res.render('auth/register', { title: 'Register' });
+  res.render('auth/register', { title: 'Register',user: {} });
 });
 
 // Register processing
