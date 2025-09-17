@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Login page
 router.get('/login', (req, res) => {
-  res.render('auth/login', { title: 'Login' });
+  res.render('auth/login', { title: 'Login',user: {} });
 });
 
 // Login processing
