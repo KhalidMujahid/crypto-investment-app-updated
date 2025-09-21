@@ -1,72 +1,165 @@
 <%- include('../partials/head', {title: title}) %>
 
-<body class="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-md w-full space-y-8 glassmorphism rounded-2xl p-8">
-    <div>
-      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-        Create your account
-      </h2>
-      <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-        Or
-        <a href="/login" class="font-medium text-crypto-blue hover:text-blue-500">
-          sign in to your existing account
-        </a>
-      </p>
-    </div>
-    <form class="mt-8 space-y-6" action="/register" method="POST">
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center justify-center">
+  <main class="flex items-center justify-center w-full h-screen px-4">
+    <div class="w-full max-w-md space-y-8 p-8 rounded-2xl 
+                backdrop-blur-xl bg-white/40 dark:bg-gray-800/40 
+                border border-gray-200/30 dark:border-gray-700/30 
+                shadow-2xl animate-fade-in transition-transform duration-300 hover:scale-[1.01]">
+      <div class="text-center">
+        <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white">
+          Create your account
+        </h2>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          Or
+          <a href="/login" class="font-medium text-crypto-blue hover:underline hover:text-blue-500">
+            sign in to your existing account
+          </a>
+        </p>
+      </div>
+
       <% if (typeof error !== 'undefined') { %>
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-          <span class="block sm:inline"><%= error %></span>
+        <div class="bg-red-100/80 dark:bg-red-900/40 border border-red-400 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm animate-shake">
+          <%= error %>
         </div>
       <% } %>
-      <div class="rounded-md shadow-sm space-y-4">
-        <div>
-          <label for="firstName" class="sr-only">First Name</label>
-          <input id="firstName" name="firstName" type="text" autocomplete="given-name" required 
-                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                 placeholder="First Name" value="<%= typeof firstName !== 'undefined' ? firstName : '' %>">
-        </div>
-        <div>
-          <label for="lastName" class="sr-only">Last Name</label>
-          <input id="lastName" name="lastName" type="text" autocomplete="family-name" required 
-                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                 placeholder="Last Name" value="<%= typeof lastName !== 'undefined' ? lastName : '' %>">
-        </div>
-        <div>
-          <label for="email" class="sr-only">Email address</label>
-          <input id="email" name="email" type="email" autocomplete="email" required 
-                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                 placeholder="Email address" value="<%= typeof email !== 'undefined' ? email : '' %>">
-        </div>
-        <div>
-          <label for="password" class="sr-only">Password</label>
-          <input id="password" name="password" type="password" autocomplete="new-password" required 
-                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                 placeholder="Password">
-        </div>
-        <div>
-          <label for="confirmPassword" class="sr-only">Confirm Password</label>
-          <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required 
-                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                 placeholder="Confirm Password">
-        </div>
-      </div>
 
-      <div class="flex items-center">
-        <input id="agreeTerms" name="agreeTerms" type="checkbox" required
-               class="h-4 w-4 text-crypto-blue focus:ring-blue-500 border-gray-300 rounded">
-        <label for="agreeTerms" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">
-          I agree to the <a href="#" class="text-crypto-blue hover:text-blue-500">Terms and Conditions</a>
-        </label>
-      </div>
+      <!-- Form -->
+      <form class="mt-8 space-y-6" action="/register" method="POST" onsubmit="showLoader(event)">
+        <div class="space-y-5">
+          <!-- First Name -->
+          <div class="relative">
+            <input id="firstName" name="firstName" type="text" autocomplete="given-name" required
+                   class="peer p-4 block w-full rounded-lg border-gray-300 dark:border-gray-600 
+                          dark:bg-gray-900/60 dark:text-white placeholder-transparent
+                          focus:ring-2 focus:ring-crypto-blue focus:border-crypto-blue sm:text-sm transition"
+                   placeholder="First Name"
+                   value="<%= typeof firstName !== 'undefined' ? firstName : '' %>">
+            <label for="firstName"
+                   class="absolute left-3 -top-2.5 text-xs text-crypto-blue peer-placeholder-shown:top-2 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-crypto-blue transition-all">
+              First Name
+            </label>
+          </div>
 
-      <div>
-        <button type="submit" 
-                class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-crypto-blue hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-          Create Account
+          <!-- Last Name -->
+          <div class="relative">
+            <input id="lastName" name="lastName" type="text" autocomplete="family-name" required
+                   class="peer p-4 block w-full rounded-lg border-gray-300 dark:border-gray-600 
+                          dark:bg-gray-900/60 dark:text-white placeholder-transparent
+                          focus:ring-2 focus:ring-crypto-blue focus:border-crypto-blue sm:text-sm transition"
+                   placeholder="Last Name"
+                   value="<%= typeof lastName !== 'undefined' ? lastName : '' %>">
+            <label for="lastName"
+                   class="absolute left-3 -top-2.5 text-xs text-crypto-blue peer-placeholder-shown:top-2 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-crypto-blue transition-all">
+              Last Name
+            </label>
+          </div>
+
+          <!-- Email -->
+          <div class="relative">
+            <input id="email" name="email" type="email" autocomplete="email" required
+                   class="peer p-4 block w-full rounded-lg border-gray-300 dark:border-gray-600 
+                          dark:bg-gray-900/60 dark:text-white placeholder-transparent
+                          focus:ring-2 focus:ring-crypto-blue focus:border-crypto-blue sm:text-sm transition"
+                   placeholder="Email address"
+                   value="<%= typeof email !== 'undefined' ? email : '' %>">
+            <label for="email"
+                   class="absolute left-3 -top-2.5 text-xs text-crypto-blue peer-placeholder-shown:top-2 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-crypto-blue transition-all">
+              Email address
+            </label>
+          </div>
+
+          <!-- Password -->
+          <div class="relative">
+            <input id="password" name="password" type="password" autocomplete="new-password" required
+                   class="peer p-4 block w-full rounded-lg border-gray-300 dark:border-gray-600 
+                          dark:bg-gray-900/60 dark:text-white placeholder-transparent
+                          focus:ring-2 focus:ring-crypto-blue focus:border-crypto-blue sm:text-sm transition pr-10"
+                   placeholder="Password">
+            <label for="password"
+                   class="absolute left-3 -top-2.5 text-xs text-crypto-blue peer-placeholder-shown:top-2 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-crypto-blue transition-all">
+              Password
+            </label>
+            <!-- Toggle -->
+            <button type="button" onclick="togglePassword('password','password-toggle')"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <svg id="password-toggle" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path d="M2.458 12C3.732 7.943 7.522 5 
+                         12 5c4.478 0 8.268 2.943 
+                         9.542 7-1.274 4.057-5.064 7-9.542 
+                         7-4.478 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="relative">
+            <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required
+                   class="peer p-4 block w-full rounded-lg border-gray-300 dark:border-gray-600 
+                          dark:bg-gray-900/60 dark:text-white placeholder-transparent
+                          focus:ring-2 focus:ring-crypto-blue focus:border-crypto-blue sm:text-sm transition pr-10"
+                   placeholder="Confirm Password">
+            <label for="confirmPassword"
+                   class="absolute left-3 -top-2.5 text-xs text-crypto-blue peer-placeholder-shown:top-2 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-crypto-blue transition-all">
+              Confirm Password
+            </label>
+            <!-- Toggle -->
+            <button type="button" onclick="togglePassword('confirmPassword','confirm-toggle')"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <svg id="confirm-toggle" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path d="M2.458 12C3.732 7.943 7.522 5 
+                         12 5c4.478 0 8.268 2.943 
+                         9.542 7-1.274 4.057-5.064 7-9.542 
+                         7-4.478 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Terms -->
+        <div class="flex items-center text-sm">
+          <input id="agreeTerms" name="agreeTerms" type="checkbox" required
+                 class="h-4 w-4 text-crypto-blue focus:ring-crypto-blue border-gray-300 rounded">
+          <label for="agreeTerms" class="ml-2 text-gray-700 dark:text-gray-300">
+            I agree to the <a href="#" class="text-crypto-blue hover:text-blue-500">Terms and Conditions</a>
+          </label>
+        </div>
+
+        <!-- Submit -->
+        <button id="register-btn" type="submit"
+                class="relative w-full flex justify-center items-center py-3 px-4 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-crypto-blue to-blue-600 shadow-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-crypto-blue transition-all">
+          <span id="btn-text">Create Account</span>
+          <span id="btn-loader" class="hidden ml-2 border-2 border-white border-t-transparent rounded-full w-4 h-4 animate-spin"></span>
         </button>
-      </div>
-    </form>
-  </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    function togglePassword(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (input.type === "password") {
+        input.type = "text";
+        icon.innerHTML = '<path d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.96 9.96 0 012.211-3.568M6.23 6.23A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.956 9.956 0 01-4.293 5.043M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2"/>';
+      } else {
+        input.type = "password";
+        icon.innerHTML = '<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268-2.943-9.542-7z"/>';
+      }
+    }
+
+    function showLoader(e) {
+      e.preventDefault();
+      const btn = document.getElementById("register-btn");
+      const text = document.getElementById("btn-text");
+      const loader = document.getElementById("btn-loader");
+      text.textContent = "Creating...";
+      loader.classList.remove("hidden");
+      btn.disabled = true;
+      setTimeout(() => e.target.submit(), 1200);
+    }
+  </script>
 </body>
 </html>

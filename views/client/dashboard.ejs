@@ -2,67 +2,118 @@
 <%- include('../partials/client-header') %>
 
 <main class="container mx-auto px-4 py-10 space-y-10">
-    <div class="flex flex-col lg:flex-row justify-between items-center bg-gradient-to-r from-crypto-blue to-blue-600 rounded-2xl p-8 shadow-lg text-white">
-        <div>
-            <h1 class="text-3xl font-bold">Welcome back, <%= user.name %> 👋</h1>
-            <p class="mt-2 text-sm opacity-90">Here’s a quick look at your investments today.</p>
-        </div>
-        <div class="flex space-x-4 mt-6 lg:mt-0">
-            <button class="bg-white/20 backdrop-blur-lg px-5 py-2 rounded-lg hover:bg-white/30 transition">
-                Quick Deposit
-            </button>
-            <button class="bg-green-500 px-5 py-2 rounded-lg hover:bg-green-600 transition">
-                Invest Now
-            </button>
-        </div>
+    <div class="flex flex-col lg:flex-row justify-between items-center bg-gradient-to-r from-crypto-blue to-blue-600 rounded-2xl p-8 shadow-xl text-white relative overflow-hidden">
+  <div class="z-10 max-w-lg">
+    <h1 class="text-3xl md:text-4xl font-extrabold">Welcome back, <%= user.firstName %> <%= user.lastName %> 👋</h1>
+    <p class="mt-3 text-base md:text-lg opacity-90">
+      Here's a snapshot of your portfolio and the markets today. Stay on top of your investments!
+    </p>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6">
+      <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl shadow-sm">
+        <p class="text-sm opacity-80">Portfolio Value</p>
+        <p class="text-xl font-bold">$<%= totalValue.toLocaleString() %></p>
+      </div>
+      <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl shadow-sm">
+        <p class="text-sm opacity-80">Assets</p>
+        <p class="text-xl font-bold"><%= wallets.length %></p>
+      </div>
+      <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl shadow-sm">
+        <p class="text-sm opacity-80">Recent Txns</p>
+        <p class="text-xl font-bold"><%= transactions.length %></p>
+      </div>
     </div>
 
-    <!-- Portfolio Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Total Balance -->
-        <div class="glassmorphism rounded-2xl p-6 shadow-lg hover:shadow-xl transition">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Balance</h3>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">
-                        $<%= totalValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %>
-                    </p>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                    💰
-                </div>
-            </div>
-            <p class="text-sm text-green-600 mt-3">+2.5% today</p>
-        </div>
+    <div class="flex space-x-4 mt-6">
+  <a href="/client/deposit" 
+     class="bg-white/20 backdrop-blur-lg px-6 py-2.5 rounded-lg hover:bg-white/30 transition text-sm md:text-base block text-center">
+    Quick Deposit
+  </a>
+  
+  <a href="/client/withdraw" 
+     class="bg-green-500 px-6 py-2.5 rounded-lg hover:bg-green-600 transition text-sm md:text-base font-medium shadow-md block text-center text-white">
+    Withdraw
+  </a>
+</div>
 
-        <!-- Profit/Loss -->
-        <div class="glassmorphism rounded-2xl p-6 shadow-lg hover:shadow-xl transition">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Profit / Loss</h3>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">+$1,245.32</p>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                    📈
-                </div>
-            </div>
-            <p class="text-sm text-blue-600 mt-3">+8.2% all time</p>
-        </div>
+  </div>
 
-        <!-- Active Investments -->
-        <div class="glassmorphism rounded-2xl p-6 shadow-lg hover:shadow-xl transition">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Active Investments</h3>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">4</p>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
-                    📊
-                </div>
-            </div>
-            <p class="text-sm text-purple-600 mt-3">2 staking, 2 auto-invest</p>
-        </div>
+  <div class="mt-8 lg:mt-0 lg:ml-12 z-10">
+    <img src="/assets/crypto-illustration.svg" alt="Logo" class="w-64 md:w-80">
+  </div>
+
+  <div class="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-2xl"></div>
+</div>
+
+
+   <!-- Portfolio Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <!-- Total Balance -->
+  <div class="glassmorphism rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:scale-[1.02] transition">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Balance</h3>
+        <p class="text-4xl font-extrabold text-gray-900 dark:text-white mt-2">
+          $<%= totalValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %>
+        </p>
+      </div>
+      <div class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xl">
+        💰
+      </div>
     </div>
+    <p class="text-sm text-green-600 mt-3 flex items-center">⬆ +2.5% today</p>
+  </div>
+</div>
+
+<!-- Transactions Table -->
+<div class="glassmorphism rounded-2xl p-6 shadow-lg">
+  <div class="flex justify-between items-center mb-6">
+    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200">Recent Transactions</h3>
+    <a href="/client/transactions" class="text-crypto-blue hover:underline">View All</a>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+      <thead class="bg-gray-50 dark:bg-gray-800">
+        <tr>
+          <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-300">Type</th>
+          <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-300">Asset</th>
+          <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-300">Amount</th>
+          <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-300">Status</th>
+          <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-300">Date</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+        <% transactions.forEach(transaction => { %>
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 odd:bg-gray-50/30 dark:odd:bg-gray-900 transition">
+            <td class="px-4 py-3">
+              <span class="px-3 py-1 text-xs font-semibold rounded-full flex items-center gap-1
+                <%= transaction.type === 'deposit' ? 'bg-green-100 text-green-800' : 
+                   transaction.type === 'withdrawal' ? 'bg-red-100 text-red-800' : 
+                   'bg-blue-100 text-blue-800' %>">
+                <%= transaction.type === 'deposit' ? '⬆' : transaction.type === 'withdrawal' ? '⬇' : '🔄' %>
+                <%= transaction.type %>
+              </span>
+            </td>
+            <td class="px-4 py-3 text-gray-900 dark:text-gray-100"><%= transaction.asset %></td>
+            <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white"><%= transaction.amount %></td>
+            <td class="px-4 py-3">
+              <span class="px-3 py-1 text-xs font-semibold rounded-full
+                <%= transaction.status === 'completed' ? 'bg-green-100 text-green-800' : 
+                   transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                   'bg-red-100 text-red-800' %>">
+                <%= transaction.status %>
+              </span>
+            </td>
+            <td class="px-4 py-3 text-gray-500 dark:text-gray-400">
+              <%= new Date(transaction.createdAt).toLocaleDateString() %>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
 
     <!-- Charts Section -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -76,81 +127,128 @@
         </div>
     </div>
 
-    <!-- Transactions Table -->
-    <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200">Recent Transactions</h3>
-            <a href="/client/transactions" class="text-crypto-blue hover:underline">View All</a>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-50 dark:bg-gray-800">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Asset</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Amount</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                    <% transactions.forEach(transaction => { %>
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition">
-                        <td class="px-4 py-3">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                <%= transaction.type === 'deposit' ? 'bg-green-100 text-green-800' : 
-                                   transaction.type === 'withdrawal' ? 'bg-red-100 text-red-800' : 
-                                   'bg-blue-100 text-blue-800' %>">
-                                <%= transaction.type %>
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100"><%= transaction.asset %></td>
-                        <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100"><%= transaction.amount %></td>
-                        <td class="px-4 py-3">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                <%= transaction.status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                   transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                   'bg-red-100 text-red-800' %>">
-                                <%= transaction.status %>
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
-                            <%= new Date(transaction.createdAt).toLocaleDateString() %>
-                        </td>
-                    </tr>
-                    <% }); %>
-                </tbody>
-            </table>
-        </div>
-    </div>
 
-    <!-- Market Overview -->
-    <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-6">Market Overview</h3>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <% const coins = [
-                {symbol: 'BTC', color: 'bg-yellow-500', price: '$41,235.67', change: '+2.4%'},
-                {symbol: 'ETH', color: 'bg-indigo-500', price: '$2,235.12', change: '+1.8%'},
-                {symbol: 'ADA', color: 'bg-red-500', price: '$0.98', change: '-0.7%'},
-                {symbol: 'DOT', color: 'bg-purple-500', price: '$19.24', change: '+3.2%'}
-            ]; %>
-            <% coins.forEach(c => { %>
-            <div class="p-4 rounded-xl shadow hover:shadow-lg transition bg-gray-100 dark:bg-gray-800">
-                <div class="flex items-center">
-                    <div class="w-10 h-10 <%= c.color %> rounded-full flex items-center justify-center text-white font-bold">
-                        <%= c.symbol[0] %>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm font-medium text-gray-900 dark:text-white"><%= c.symbol %></p>
-                        <p class="text-sm <%= c.change.includes('+') ? 'text-green-600' : 'text-red-600' %>">
-                            <%= c.price %> <span class="text-xs"><%= c.change %></span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <% }); %>
-        </div>
+<div class="glassmorphism rounded-2xl p-6 shadow-lg mt-10">
+  <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-6">Live Bitcoin Chart</h3>
+  <div id="tradingview-widget" class="h-[500px]"></div>
+</div>
+
+
+    <div class="glassmorphism rounded-2xl p-4 sm:p-6 shadow-lg">
+  <h3 class="text-lg md:text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 sm:mb-6">
+    Market Overview
+  </h3>
+
+  <!-- Global Stats -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-6">
+    <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-xl shadow">
+      <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Global Market Cap</p>
+      <p class="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+        $<%= global.total_market_cap.usd.toLocaleString() %>
+      </p>
     </div>
+    <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-xl shadow">
+      <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">24h Volume</p>
+      <p class="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+        $<%= global.total_volume.usd.toLocaleString() %>
+      </p>
+    </div>
+    <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-xl shadow">
+      <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">BTC Dominance</p>
+      <p class="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+        <%= global.market_cap_percentage.btc.toFixed(2) %>%
+      </p>
+    </div>
+    <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-xl shadow">
+      <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">ETH Dominance</p>
+      <p class="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+        <%= global.market_cap_percentage.eth.toFixed(2) %>%
+      </p>
+    </div>
+  </div>
+
+  <!-- Top Movers -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
+    <!-- Gainers -->
+    <div>
+      <h4 class="text-xs sm:text-sm font-semibold text-green-600 dark:text-green-400 mb-2 sm:mb-3">
+        Top Gainers (24h)
+      </h4>
+      <ul class="space-y-2 text-xs sm:text-sm">
+        <% topGainers.forEach(c => { %>
+          <li class="flex justify-between items-center">
+            <span class="flex items-center text-gray-800 dark:text-gray-200">
+              <img src="<%= c.image %>" class="w-4 h-4 sm:w-5 sm:h-5 inline mr-1">
+              <%= c.symbol.toUpperCase() %>
+            </span>
+            <span class="text-green-500 font-semibold">
+              +<%= c.price_change_percentage_24h.toFixed(2) %>%
+            </span>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+    <!-- Losers -->
+    <div>
+      <h4 class="text-xs sm:text-sm font-semibold text-red-600 dark:text-red-400 mb-2 sm:mb-3">
+        Top Losers (24h)
+      </h4>
+      <ul class="space-y-2 text-xs sm:text-sm">
+        <% topLosers.forEach(c => { %>
+          <li class="flex justify-between items-center">
+            <span class="flex items-center text-gray-800 dark:text-gray-200">
+              <img src="<%= c.image %>" class="w-4 h-4 sm:w-5 sm:h-5 inline mr-1">
+              <%= c.symbol.toUpperCase() %>
+            </span>
+            <span class="text-red-500 font-semibold">
+              <%= c.price_change_percentage_24h.toFixed(2) %>%
+            </span>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Live Coins -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+    <% market.forEach(c => { %>
+      <div class="p-4 rounded-xl shadow hover:shadow-lg transition bg-gray-100 dark:bg-gray-800">
+        <div class="flex items-center">
+          <img src="<%= c.image %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full">
+          <div class="ml-3">
+            <p class="text-xs sm:text-sm md:text-base font-medium text-gray-900 dark:text-gray-100">
+              <%= c.name %> (<%= c.symbol.toUpperCase() %>)
+            </p>
+            <p class="text-xs sm:text-sm md:text-base font-semibold <%= c.price_change_percentage_24h >= 0 ? 'text-green-500' : 'text-red-500' %>">
+              $<%= c.current_price.toLocaleString() %> 
+              <span class="text-[10px] sm:text-xs"><%= c.price_change_percentage_24h.toFixed(2) %>%</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
 </main>
+
+<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+<script>
+  new TradingView.widget({
+    "width": "100%",
+    "height": 500,
+    "symbol": "BINANCE:BTCUSDT",
+    "interval": "30",
+    "timezone": "Etc/UTC",
+    "theme": "light",
+    "style": "1",
+    "locale": "en",
+    "toolbar_bg": "#f1f3f6",
+    "hide_top_toolbar": false,
+    "save_image": false,
+    "container_id": "tradingview-widget"
+  });
+</script>
+
 
 <%- include('../partials/footer') %>

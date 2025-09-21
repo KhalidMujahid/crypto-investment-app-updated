@@ -1,18 +1,22 @@
 <%- include('../partials/head', {title: title}) %>
 
-  <main class="w-full max-w-md">
-    <div class="relative backdrop-blur-xl bg-white/40 dark:bg-gray-800/40 
-                shadow-xl rounded-2xl p-8 border border-gray-200/30 
-                dark:border-gray-700/30 animate-fade-in">
+<body class="min-h-screen flex items-center justify-center 
+             bg-gradient-to-br from-gray-50 via-white to-gray-100 
+             dark:from-gray-900 dark:via-gray-950 dark:to-black">
 
-      <!-- Header -->
+  <main class="flex items-center justify-center w-full h-screen px-4">
+    <div class="relative backdrop-blur-xl bg-white/40 dark:bg-gray-800/40 
+                shadow-2xl rounded-2xl p-8 border border-gray-200/30 
+                dark:border-gray-700/30 animate-fade-in w-full max-w-md
+                transition-transform duration-300 hover:scale-[1.02]">
+
       <div class="text-center">
         <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white">
           Welcome back 👋
         </h2>
         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          Don’t have an account? 
-          <a href="/register" class="font-medium text-crypto-blue hover:text-blue-500 transition">
+          Don't have an account? 
+          <a href="/register" class="font-semibold text-crypto-blue hover:underline hover:text-blue-500 transition">
             Sign up
           </a>
         </p>
@@ -37,12 +41,25 @@
       <% } %>
 
       <!-- Form -->
-      <form class="mt-8 space-y-6" action="/login" method="POST">
+      <form class="mt-8 space-y-6" action="/login" method="POST" onsubmit="showLoader(event)">
         <div class="space-y-5">
           <!-- Email -->
-          <div class="relative">
-            <label for="email" class="sr-only">Email address</label>
+          <div class="relative group">
+            <input id="email" name="email" type="email" autocomplete="email" required
+                   class="peer p-4 pl-10 block w-full rounded-lg border-gray-300 
+                          dark:border-gray-600 dark:bg-gray-900/60 dark:text-white 
+                          placeholder-transparent focus:ring-2 focus:ring-crypto-blue 
+                          focus:border-crypto-blue sm:text-sm transition"
+                   placeholder="Email address"
+                   value="<%= typeof email !== 'undefined' ? email : '' %>">
+            <label for="email" 
+                   class="absolute left-10 top-2 text-gray-400 text-sm 
+                          peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm 
+                          peer-focus:-top-2 peer-focus:text-xs peer-focus:text-crypto-blue transition-all">
+              Email address
+            </label>
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+              <!-- email icon -->
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2.94 6.34a2 2 0 011.44-.59h11.24a2 2 
                          0 011.44.59l-7.06 5.71-7.06-5.71z"/>
@@ -51,33 +68,22 @@
                          0L18 8.67z"/>
               </svg>
             </span>
-            <input id="email" name="email" type="email" autocomplete="email" required
-                   class="pl-10 block w-full rounded-lg border-gray-300 
-                          dark:border-gray-600 dark:bg-gray-900/60 dark:text-white 
-                          placeholder-gray-400 focus:ring-crypto-blue focus:border-crypto-blue sm:text-sm"
-                   placeholder="Email address"
-                   value="<%= typeof email !== 'undefined' ? email : '' %>">
           </div>
 
-          <!-- Password -->
-          <div class="relative">
-            <label for="password" class="sr-only">Password</label>
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M5 8a5 5 0 
-                      1110 0v2h1a1 1 0 011 1v7a1 1 
-                      0 01-1 1H4a1 1 0 01-1-1v-7a1 
-                      1 0 011-1h1V8zm8 0v2H7V8a3 
-                      3 0 016 0z" clip-rule="evenodd"/>
-              </svg>
-            </span>
+          <div class="relative group">
             <input id="password" name="password" type="password" autocomplete="current-password" required
-                   class="pl-10 pr-10 block w-full rounded-lg border-gray-300 
+                   class="peer p-4 pl-10 pr-10 block w-full rounded-lg border-gray-300 
                           dark:border-gray-600 dark:bg-gray-900/60 dark:text-white 
-                          placeholder-gray-400 focus:ring-crypto-blue focus:border-crypto-blue sm:text-sm"
+                          placeholder-transparent focus:ring-2 focus:ring-crypto-blue focus:border-crypto-blue sm:text-sm transition"
                    placeholder="Password">
-            <!-- Toggle -->
-            <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition">
+            <label for="password" 
+                   class="absolute left-10 top-2 text-gray-400 text-sm 
+                          peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm 
+                          peer-focus:-top-2 peer-focus:text-xs peer-focus:text-crypto-blue transition-all">
+              Password
+            </label>
+            <button type="button" onclick="togglePassword()" 
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition">
               <svg id="password-toggle-icon" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                 <path d="M2.458 12C3.732 7.943 7.522 5 
@@ -89,7 +95,6 @@
           </div>
         </div>
 
-        <!-- Options -->
         <div class="flex items-center justify-between text-sm">
           <label class="flex items-center cursor-pointer select-none text-gray-700 dark:text-gray-300">
             <input id="remember-me" name="remember-me" type="checkbox"
@@ -97,16 +102,15 @@
             <span class="ml-2">Remember me</span>
           </label>
 
-          <a href="#" class="font-medium text-crypto-blue hover:text-blue-500 transition">
+          <a href="#" class="font-semibold text-crypto-blue hover:underline hover:text-blue-500 transition">
             Forgot password?
           </a>
         </div>
 
-        <!-- Submit -->
-        <button type="submit"
-                class="relative w-full flex justify-center items-center py-3 px-4 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-crypto-blue to-blue-600 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-crypto-blue transition">
+        <button id="login-btn" type="submit"
+                class="relative w-full flex justify-center items-center py-3 px-4 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-crypto-blue to-blue-600 shadow-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-crypto-blue transition-all duration-200">
           <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <svg class="w-5 h-5 text-white animate-pulse" fill="currentColor" viewBox="0 0 20 20">
               <path d="M2.003 9.25C2.003 5.53 
                        5.503 2 9.25 2s7.247 3.53 
                        7.247 7.25c0 1.56-.52 3-1.397 
@@ -114,7 +118,8 @@
                        7.247 0 012.003 9.25z"/>
             </svg>
           </span>
-          Sign in
+          <span id="btn-text">Sign in</span>
+          <span id="btn-loader" class="hidden ml-2 border-2 border-white border-t-transparent rounded-full w-4 h-4 animate-spin"></span>
         </button>
       </form>
     </div>
@@ -129,9 +134,19 @@
         icon.innerHTML = '<path d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.96 9.96 0 012.211-3.568M6.23 6.23A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.956 9.956 0 01-4.293 5.043M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2"/>';
       } else {
         input.type = "password";
-        icon.innerHTML = '<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.478 0-8.268-2.943-9.542-7z"/>';
+        icon.innerHTML = '<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268-2.943-9.542-7z"/>';
       }
     }
+
+    function showLoader(e) {
+      e.preventDefault();
+      const btn = document.getElementById("login-btn");
+      const text = document.getElementById("btn-text");
+      const loader = document.getElementById("btn-loader");
+      text.textContent = "Signing in...";
+      loader.classList.remove("hidden");
+      btn.disabled = true;
+      setTimeout(() => e.target.submit(), 1000);
+    }
   </script>
-</body>
-</html>
+</bod

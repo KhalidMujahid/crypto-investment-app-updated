@@ -3,30 +3,63 @@ const { ensureAuth } = require('../middleware/auth');
 const Transaction = require('../models/Transaction');
 const Wallet = require('../models/Wallet');
 const Notification = require("../models/Notification");
+const axios = require("axios");
 const router = express.Router();
 
-// Dashboard home
-router.get('/dashboard', ensureAuth, async (req, res) => {
+
+router.get("/dashboard", ensureAuth, async (req, res) => {
   try {
-    const transactions = await Transaction.find({ user: req.user.id }).sort({ createdAt: -1 }).limit(5);
+    const transactions = await Transaction.find({ user: req.user.id })
+      .sort({ createdAt: -1 })
+      .limit(5);
+
     const wallets = await Wallet.find({ user: req.user.id });
-    
-    // Calculate portfolio value (simplified)
+
     let totalValue = 0;
-    wallets.forEach(wallet => {
+    wallets.forEach((wallet) => {
       totalValue += wallet.balance * (wallet.currentPrice || 1);
     });
-    
-    res.render('client/dashboard', {
+
+    const { data: global } = await axios.get(
+      "https://api.coingecko.com/api/v3/global"
+    );
+
+
+    const { data: market } = await axios.get(
+      "https://api.coingecko.com/api/v3/coins/markets",
+      {
+        params: {
+          vs_currency: "usd",
+          order: "market_cap_desc",
+          per_page: 50,
+          page: 1,
+          sparkline: true,
+          price_change_percentage: "24h",
+        },
+      }
+    );
+
+    const sorted = [...market].sort(
+      (a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h
+    );
+
+    const topGainers = sorted.slice(0, 5);
+    const topLosers = sorted.slice(-5).reverse();
+
+    res.render("client/dashboard", {
       user: req.user,
       transactions,
       wallets,
       totalValue,
-      title: 'Dashboard'
+      title: "Dashboard",
+      global: global.data,
+      topGainers,
+      topLosers,
+      market: market.slice(0, 10), 
     });
   } catch (err) {
     console.error(err);
-    res.render('error', { error: err });
+    res.render("error", { error: err });
   }
 });
 
