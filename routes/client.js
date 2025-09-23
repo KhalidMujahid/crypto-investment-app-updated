@@ -64,14 +64,14 @@ router.get("/dashboard", ensureAuth, async (req, res) => {
 });
 
 // Portfolio page
-router.get('/portfolio', ensureAuth, async (req, res) => {
-  try {
-    const wallets = await Wallet.find({ user: req.user.id });
-    res.render('client/portfolio', { user: req.user, wallets, title: 'Portfolio' });
-  } catch (err) {
-    res.render('error', { error: err });
-  }
-});
+// router.get('/portfolio', ensureAuth, async (req, res) => {
+//   try {
+//     const wallets = await Wallet.find({ user: req.user.id });
+//     res.render('client/portfolio', { user: req.user, wallets, title: 'Portfolio' });
+//   } catch (err) {
+//     res.render('error', { error: err });
+//   }
+// });
 
 // Transactions page
 router.get('/transactions', ensureAuth, async (req, res) => {
@@ -101,26 +101,26 @@ router.get('/transactions', ensureAuth, async (req, res) => {
 });
 
 // Deposit page
-router.get('/deposit', ensureAuth, async (req, res) => {
-  try {
-    // Get deposit wallet address from system settings or database
-    const depositWallet = await Wallet.findOne({ isDepositWallet: true });
+// router.get('/deposit', ensureAuth, async (req, res) => {
+//   try {
+//     // Get deposit wallet address from system settings or database
+//     const depositWallet = await Wallet.findOne({ isDepositWallet: true });
     
-    res.render('client/deposit', {
-      user: req.user,
-      depositAddress: depositWallet?.address,
-      title: 'Deposit'
-    });
-  } catch (err) {
-    res.render('error', { error: err });
-  }
-});
+//     res.render('client/deposit', {
+//       user: req.user,
+//       depositAddress: depositWallet?.address,
+//       title: 'Deposit'
+//     });
+//   } catch (err) {
+//     res.render('error', { error: err });
+//   }
+// });
 
 // Withdrawal page
 router.get('/withdraw', ensureAuth, async (req, res) => {
   try {
     const wallets = await Wallet.find({ user: req.user.id, balance: { $gt: 0 } });
-    res.render('client/withdraw', { user: req.user, wallets, title: 'Withdraw' });
+    res.render('client/withdraw', { user: req.user,error: null,success: null, title: 'Withdraw' });
   } catch (err) {
     res.render('error', { error: err });
   }
@@ -177,48 +177,50 @@ router.post('/deposit', ensureAuth, async (req, res) => {
 // Handle withdrawal request
 router.post('/withdraw', ensureAuth, async (req, res) => {
   try {
-    const { amount, currency, address } = req.body;
-    
-    // Check if user has sufficient balance
-    const wallet = await Wallet.findOne({ user: req.user.id, currency });
+    const { amount, address } = req.body;
+
+    if (req.user.kycStatus !== 'verified') {
+      req.flash('error', 'Your account is not verified. Please complete KYC to withdraw.');
+      return res.redirect('/client/withdraw');
+    }
+
+    const wallet = await Wallet.findOne({ user: req.user.id });
     if (!wallet || wallet.balance < parseFloat(amount)) {
       req.flash('error', 'Insufficient balance');
       return res.redirect('/client/withdraw');
     }
-    
-    // Create withdrawal transaction
+
     const transaction = new Transaction({
       user: req.user.id,
       type: 'withdrawal',
-      asset: currency,
+      asset: "BTC",
       amount: parseFloat(amount),
       address,
       status: 'pending'
     });
-    
+
     await transaction.save();
-    
-    // Lock the funds
+
     wallet.lockedBalance += parseFloat(amount);
     wallet.balance -= parseFloat(amount);
     await wallet.save();
-    
-    // Create notification
+
     const notification = new Notification({
       user: req.user.id,
       title: 'Withdrawal Requested',
       message: `Your withdrawal of ${amount} ${currency} is pending approval.`,
       type: 'transaction'
     });
-    
+
     await notification.save();
-    
+
     res.redirect('/client/transactions');
   } catch (err) {
     console.error('Withdrawal error:', err);
     res.render('error', { error: err });
   }
 });
+
 
 // Get notifications API endpoint
 router.get('/notifications/data', ensureAuth, async (req, res) => {

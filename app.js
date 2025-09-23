@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
+const flash = require("connect-flash");
 const MongoStore = require("connect-mongo");
 const path = require("path");
 
@@ -17,6 +18,8 @@ mongoose
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+// Flash middleware
+app.use(flash());
 
 // Session configuration
 app.use(

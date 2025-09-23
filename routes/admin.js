@@ -52,6 +52,22 @@ router.get('/users', ensureAuth, ensureAdmin, async (req, res) => {
   }
 });
 
+// Deposit page
+router.get('/deposit', ensureAuth,ensureAdmin, async (req, res) => {
+  try {
+    // Get deposit wallet address from system settings or database
+    const depositWallet = await Wallet.findOne({ isDepositWallet: true });
+    
+    res.render('client/deposit', {
+      user: req.user,
+      depositAddress: depositWallet?.address,
+      title: 'Deposit'
+    });
+  } catch (err) {
+    res.render('error', { error: err });
+  }
+});
+
 // Withdrawal requests
 router.get('/withdrawals', ensureAuth, ensureAdmin, async (req, res) => {
   try {
