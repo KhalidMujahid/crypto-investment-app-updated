@@ -4,7 +4,7 @@
       <!-- Logo -->
       <div class="flex items-center">
         <a href="/client/dashboard" class="text-2xl font-bold text-crypto-blue tracking-wide hover:opacity-80 transition">
-          CryptoInvest
+          Advanced Trading
         </a>
       </div>
 
@@ -112,14 +112,12 @@
 </header>
 
 <script>
-  // Mobile menu toggle
   const mobileMenuBtn = document.getElementById('mobile-menu-btn');
   const mobileMenu = document.getElementById('mobile-menu');
   mobileMenuBtn.addEventListener('click', () => {
     mobileMenu.classList.toggle('hidden');
   });
 
-  // Load notifications dynamically
   document.addEventListener('DOMContentLoaded', function() {
     fetch('/client/notifications/data')
       .then(res => res.json())
