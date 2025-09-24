@@ -1,0 +1,91 @@
+<%- include('../partials/head', {title: "KYC Verification"}) %>
+<%- include('../partials/admin-header') %>
+
+<main class="container mx-auto px-4 py-8">
+  <!-- Page Header -->
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">KYC Verification</h2>
+    <a href="/admin/dashboard" class="text-sm text-indigo-600 hover:underline">&larr; Back to Dashboard</a>
+  </div>
+
+  <!-- User KYC Info -->
+  <div class="glassmorphism rounded-2xl p-6 shadow-lg mb-8">
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">User Information</h3>
+    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Full Name</dt>
+        <dd class="text-lg font-semibold text-gray-900 dark:text-white"><%= user.firstName %> <%= user.lastName %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Email</dt>
+        <dd class="text-gray-700 dark:text-gray-300"><%= user.email %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Phone</dt>
+        <dd class="text-gray-700 dark:text-gray-300"><%= user.phone || 'N/A' %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Current KYC Status</dt>
+        <dd>
+          <span class="px-2 py-1 text-xs font-semibold rounded-full 
+            <%= user.kycStatus === 'verified' ? 'bg-green-100 text-green-800' : 
+               user.kycStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+               user.kycStatus === 'rejected' ? 'bg-red-100 text-red-800' : 
+               'bg-gray-100 text-gray-800' %>">
+            <%= user.kycStatus %>
+          </span>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- KYC Documents -->
+  <div class="glassmorphism rounded-2xl p-6 shadow-lg mb-8">
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Submitted Documents</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <% if (user.kycDocuments && user.kycDocuments.length > 0) { %>
+        <% user.kycDocuments.forEach(doc => { %>
+          <div class="border rounded-lg overflow-hidden shadow-sm">
+            <div class="p-3 bg-gray-50 dark:bg-gray-800 border-b">
+              <p class="text-sm font-medium text-gray-700 dark:text-gray-300"><%= doc.type %></p>
+            </div>
+            <div class="p-3">
+              <a href="<%= doc.documentUrl %>" target="_blank">
+                <img src="<%= doc.documentUrl %>" alt="KYC Document" class="w-full h-48 object-cover rounded-md hover:opacity-90 transition" />
+              </a>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p class="text-gray-500">No documents submitted.</p>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Admin Actions -->
+  <div class="glassmorphism rounded-2xl p-6 shadow-lg">
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Admin Action</h3>
+    <form action="/admin/users/<%= user._id %>/kyc/update" method="POST" class="space-y-4">
+      <div>
+        <label for="notes" class="block text-sm font-medium text-gray-700">Admin Notes</label>
+        <textarea id="notes" name="notes" rows="3" class="mt-1 block w-full border rounded-md shadow-sm p-2"></textarea>
+      </div>
+      <div class="flex gap-4">
+        <button type="submit" name="action" value="approve"
+          class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+          Approve
+        </button>
+        <button type="submit" name="action" value="reject"
+          class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+          Reject
+        </button>
+        <button type="submit" name="action" value="pending"
+          class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
+          Mark Pending
+        </button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>

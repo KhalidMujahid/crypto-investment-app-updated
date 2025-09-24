@@ -1,1 +1,41 @@
-<h1>Error occured</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Error</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+  <div class="max-w-lg w-full bg-white shadow-lg rounded-2xl p-8 text-center">
+    <div class="mx-auto mb-4 h-16 w-16 flex items-center justify-center rounded-full bg-red-100">
+      <svg class="h-8 w-8 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 9v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+      </svg>
+    </div>
+
+    <h1 class="text-2xl font-semibold text-gray-900">Something went wrong</h1>
+
+    <p class="mt-2 text-gray-600">
+      <%= error && error.message ? error.message : "An unexpected error occurred." %>
+    </p>
+
+    <% if (error && error.stack) { %>
+      <pre class="mt-4 text-left text-xs text-gray-500 bg-gray-100 p-3 rounded-md overflow-x-auto"><%= error.stack %></pre>
+    <% } %>
+
+
+    <div class="mt-6 flex justify-center gap-4">
+      <button onclick="history.back()"
+        class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
+        Go Back
+      </button>
+      <a href="/"
+        class="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition">
+        Home
+      </a>
+    </div>
+  </div>
+</body>
+</html>

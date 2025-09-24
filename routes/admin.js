@@ -55,8 +55,7 @@ router.get('/users', ensureAuth, ensureAdmin, async (req, res) => {
 // Deposit page
 router.get('/deposit', ensureAuth,ensureAdmin, async (req, res) => {
   try {
-    // Get deposit wallet address from system settings or database
-    const depositWallet = await Wallet.findOne({ isDepositWallet: true });
+    const depositWallet = await Wallet.find();
     
     res.render('client/deposit', {
       user: req.user,
@@ -65,6 +64,126 @@ router.get('/deposit', ensureAuth,ensureAdmin, async (req, res) => {
     });
   } catch (err) {
     res.render('error', { error: err });
+  }
+});
+
+
+// GET /admin/users
+router.get("/users", ensureAuth, ensureAdmin, async (req, res) => {
+  try {
+    const users = await User.find().sort({ createdAt: -1 });
+    res.render("admin/users", { users });
+  } catch (err) {
+    res.render("error", { error: err });
+  }
+});
+
+// GET /admin/users/:id
+router.get("/users/:id", ensureAuth, ensureAdmin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).render("error", { error: { message: "User not found" } });
+    }
+
+    const wallets = await Wallet.find({ user: user._id });
+
+    res.render("admin/user-details", { user, wallets });
+  } catch (err) {
+    res.render("error", { error: err });
+  }
+});
+
+
+// POST /admin/users/:id/wallets/:walletId/update
+router.post("/users/:id/wallets/:walletId/update", ensureAuth, ensureAdmin, async (req, res) => {
+  try {
+    const { balance, lockedBalance } = req.body;
+
+    await Wallet.findByIdAndUpdate(req.params.walletId, {
+      balance,
+      lockedBalance
+    });
+
+    res.redirect(`/admin/users/${req.params.id}`);
+  } catch (err) {
+    res.render("error", { error: err });
+  }
+});
+
+// POST /users/:id/wallets/create
+router.post("/users/:id/wallets/create", ensureAuth, ensureAdmin, async (req, res) => {
+  try {
+    const { currency, address, balance } = req.body;
+    await Wallet.create({
+      user: req.params.id,
+      currency,
+      address,
+      balance
+    });
+    res.redirect(`/admin/users/${req.params.id}`);
+  } catch (err) {
+    res.render("error", { error: err });
+  }
+});
+
+// List all users with pending KYC
+router.get("/users/kyc/pending", async (req, res) => {
+  try {
+    const users = await User.find({ kycStatus: "pending" }).lean();
+
+    res.render("admin/kyc-pending", { user: req.user, users });
+  } catch (err) {
+    console.error("Pending KYC GET error:", err);
+    res.status(500).render("error", { error: err });
+  }
+});
+
+// GET route - show KYC verification page for a user
+router.get("/users/:id/kyc", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).lean();
+
+    if (!user) {
+      return res.status(404).render("error", { error: { message: "User not found" } });
+    }
+
+    res.render("admin/kyc", { user });
+  } catch (err) {
+    console.error("KYC GET error:", err);
+    res.status(500).render("error", { error: err });
+  }
+});
+
+// POST route - update KYC status
+router.post("/users/:id/kyc/update", async (req, res) => {
+  try {
+    const { action, notes } = req.body;
+    const { id } = req.params;
+
+    let kycStatus = "pending";
+    if (action === "approve") kycStatus = "verified";
+    if (action === "reject") kycStatus = "rejected";
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        kycStatus,
+        kycNotes: notes || "",
+        kycReviewedAt: new Date(),
+      },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).render("error", { error: { message: "User not found" } });
+    }
+
+    req.flash("success", `KYC ${kycStatus} for ${user.email}`);
+    res.redirect(`/admin/users/${id}/kyc`);
+  } catch (err) {
+    console.error("KYC POST error:", err);
+    res.status(500).render("error", { error: err });
   }
 });
 

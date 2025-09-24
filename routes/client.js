@@ -4,8 +4,21 @@ const Transaction = require('../models/Transaction');
 const Wallet = require('../models/Wallet');
 const Notification = require("../models/Notification");
 const axios = require("axios");
+const cloudinary = require('cloudinary').v2;
 const router = express.Router();
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const path = require('path');
 
+cloudinary.config({
+  cloud_name: process.env.YOUR_CLOUD_NAME,
+  api_key: process.env.YOUR_API_KEY,
+  api_secret: process.env.YOUR_API_SECRET,
+});
+
+
+const storage = multer.diskStorage({});
+const upload = multer({ storage });
 
 router.get("/dashboard", ensureAuth, async (req, res) => {
   try {
@@ -184,11 +197,27 @@ router.post('/withdraw', ensureAuth, async (req, res) => {
       return res.redirect('/client/withdraw');
     }
 
+    const lastWithdrawal = await Transaction.findOne({
+      user: req.user.id,
+      type: 'withdrawal'
+    }).sort({ createdAt: -1 });
+
+    if (lastWithdrawal) {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      if (lastWithdrawal.createdAt > sevenDaysAgo) {
+        req.flash('error', 'You can only place a new withdrawal 7 days after your last request.');
+        return res.redirect('/client/withdraw');
+      }
+    }
+
     const wallet = await Wallet.findOne({ user: req.user.id });
     if (!wallet || wallet.balance < parseFloat(amount)) {
       req.flash('error', 'Insufficient balance');
       return res.redirect('/client/withdraw');
     }
+
 
     const transaction = new Transaction({
       user: req.user.id,
@@ -196,19 +225,22 @@ router.post('/withdraw', ensureAuth, async (req, res) => {
       asset: "BTC",
       amount: parseFloat(amount),
       address,
-      status: 'pending'
+      status: 'pending',
+      createdAt: new Date()
     });
 
     await transaction.save();
 
+    // Update wallet
     wallet.lockedBalance += parseFloat(amount);
     wallet.balance -= parseFloat(amount);
     await wallet.save();
 
+
     const notification = new Notification({
       user: req.user.id,
       title: 'Withdrawal Requested',
-      message: `Your withdrawal of ${amount} ${currency} is pending approval.`,
+      message: `Your withdrawal of ${amount} is pending approval.`,
       type: 'transaction'
     });
 
@@ -220,6 +252,7 @@ router.post('/withdraw', ensureAuth, async (req, res) => {
     res.render('error', { error: err });
   }
 });
+
 
 
 // Get notifications API endpoint
@@ -246,36 +279,42 @@ router.post('/notifications/:id/read', ensureAuth, async (req, res) => {
 });
 
 // KYC upload
-router.post('/kyc/upload', ensureAuth, async (req, res) => {
-  try {
-    // In a real application, you would handle file upload here
-    // For this example, we'll just simulate the process
-    
-    req.user.kycStatus = 'pending';
-    req.user.kycDocuments.push({
-      documentType: req.body.documentType,
-      documentUrl: '/uploads/kyc/sample.jpg', // This would be the uploaded file path
-      uploadedAt: new Date()
-    });
-    
-    await req.user.save();
-    
-    // Create notification
-    const notification = new Notification({
-      user: req.user.id,
-      title: 'KYC Documents Submitted',
-      message: 'Your KYC documents have been submitted for verification.',
-      type: 'info'
-    });
-    
-    await notification.save();
-    
-    res.redirect('/client/profile');
-  } catch (err) {
-    console.error('KYC upload error:', err);
-    res.render('error', { error: err });
+router.post(
+  "/kyc/upload",
+  ensureAuth,
+  upload.single("document"),
+  async (req, res) => {
+    try {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "kyc-documents",
+        resource_type: "auto",
+      });
+
+      req.user.kycStatus = "pending";
+      req.user.kycDocuments.push({
+        documentType: req.body.documentType,
+        documentUrl: result.secure_url,
+        uploadedAt: new Date(),
+      });
+
+      await req.user.save();
+
+      const notification = new Notification({
+        user: req.user.id,
+        title: "KYC Documents Submitted",
+        message: "Your KYC documents have been submitted for verification.",
+        type: "info",
+      });
+
+      await notification.save();
+
+      res.redirect("/client/profile");
+    } catch (err) {
+      console.error("KYC upload error:", err);
+      res.render("error", { error: err });
+    }
   }
-});
+);
 
 // Toggle 2FA
 router.post('/toggle-2fa', ensureAuth, async (req, res) => {
