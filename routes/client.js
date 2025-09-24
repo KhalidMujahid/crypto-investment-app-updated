@@ -3,6 +3,7 @@ const { ensureAuth } = require('../middleware/auth');
 const Transaction = require('../models/Transaction');
 const Wallet = require('../models/Wallet');
 const Notification = require("../models/Notification");
+const nodemailer = require("nodemailer");
 const axios = require("axios");
 const cloudinary = require('cloudinary').v2;
 const router = express.Router();
@@ -15,6 +16,14 @@ cloudinary.config({
   api_secret: process.env.YOUR_API_SECRET,
 });
 
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: "advancedstrading@gmail.com",
+    pass: "viwh iefs gncz ggpl "
+  }
+});
 
 const storage = multer.diskStorage({});
 const upload = multer({ storage });
@@ -32,42 +41,13 @@ router.get("/dashboard", ensureAuth, async (req, res) => {
       totalValue += wallet.balance * (wallet.currentPrice || 1);
     });
 
-    const { data: global } = await axios.get(
-      "https://api.coingecko.com/api/v3/global"
-    );
 
-
-    const { data: market } = await axios.get(
-      "https://api.coingecko.com/api/v3/coins/markets",
-      {
-        params: {
-          vs_currency: "usd",
-          order: "market_cap_desc",
-          per_page: 50,
-          page: 1,
-          sparkline: true,
-          price_change_percentage: "24h",
-        },
-      }
-    );
-
-    const sorted = [...market].sort(
-      (a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h
-    );
-
-    const topGainers = sorted.slice(0, 5);
-    const topLosers = sorted.slice(-5).reverse();
-
-    res.render("client/dashboard", {
+   res.render("client/dashboard", {
       user: req.user,
       transactions,
       wallets,
       totalValue,
       title: "Dashboard",
-      global: global.data,
-      topGainers,
-      topLosers,
-      market: market.slice(0, 10), 
     });
   } catch (err) {
     console.error(err);
@@ -217,7 +197,6 @@ router.post('/withdraw', ensureAuth, async (req, res) => {
       return res.redirect('/client/withdraw');
     }
 
-
     const transaction = new Transaction({
       user: req.user.id,
       type: 'withdrawal',
@@ -235,15 +214,32 @@ router.post('/withdraw', ensureAuth, async (req, res) => {
     wallet.balance -= parseFloat(amount);
     await wallet.save();
 
-
     const notification = new Notification({
       user: req.user.id,
       title: 'Withdrawal Requested',
-      message: `Your withdrawal of ${amount} is pending approval.`,
+      message: `Your withdrawal of ${amount} BTC is pending approval.`,
       type: 'transaction'
     });
 
     await notification.save();
+
+    const mailOptions = {
+      from: `Advanced Trading Support advancedstrading@gmail.com`,
+      to: req.user.email,
+      subject: "Withdrawal Request Submitted",
+      html: `
+        <h2>Withdrawal Request</h2>
+        <p>Hi ${req.user.firstName || 'User'},</p>
+        <p>Your withdrawal request has been placed successfully.</p>
+        <p><strong>Amount:</strong> ${amount} BTC</p>
+        <p><strong>Address:</strong> ${address}</p>
+        <p>Status: Pending Approval</p>
+        <br/>
+        <p>Thank you,<br/>Advanced Trading Team</p>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
 
     res.redirect('/client/transactions');
   } catch (err) {
@@ -251,6 +247,7 @@ router.post('/withdraw', ensureAuth, async (req, res) => {
     res.render('error', { error: err });
   }
 });
+
 
 
 

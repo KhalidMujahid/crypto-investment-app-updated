@@ -4,7 +4,17 @@ const User = require('../models/User');
 const Transaction = require('../models/Transaction');
 const Notification = require("../models/Notification");
 const Wallet = require('../models/Wallet');
+const nodemailer = require("nodemailer");
 const router = express.Router();
+
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: "advancedstrading@gmail.com",
+    pass: "viwh iefs gncz ggpl "
+  }
+});
 
 // Admin dashboard
 router.get('/dashboard', ensureAuth, ensureAdmin, async (req, res) => {
@@ -176,8 +186,31 @@ router.post("/users/:id/kyc/update", async (req, res) => {
     );
 
     if (!user) {
-      return res.status(404).render("error", { error: { message: "User not found" } });
+      return res
+        .status(404)
+        .render("error", { error: { message: "User not found" } });
     }
+
+
+    let subject = "KYC Verification Update";
+    let message = `
+      <h2>KYC Status Update</h2>
+      <p>Hi ${user.firstName || "User"},</p>
+      <p>Your KYC verification status has been updated.</p>
+      <p><strong>Status:</strong> ${kycStatus.toUpperCase()}</p>
+      ${notes ? `<p><strong>Notes:</strong> ${notes}</p>` : ""}
+      <br/>
+      <p>Thank you,<br/>Advanced Trading Team</p>
+    `;
+
+    const mailOptions = {
+      from: `"Advanced Trading Support" advancedstrading@gmail.com`,
+      to: user.email,
+      subject,
+      html: message,
+    };
+
+    await transporter.sendMail(mailOptions);
 
     req.flash("success", `KYC ${kycStatus} for ${user.email}`);
     res.redirect(`/admin/users/${id}/kyc`);
@@ -242,11 +275,13 @@ router.post('/withdrawals/:id/process', ensureAuth, ensureAdmin, async (req, res
     if (!transaction) {
       return res.status(404).json({ error: 'Transaction not found' });
     }
-    
+
+    let emailSubject = "Withdrawal Update";
+    let emailMessage = "";
+
     if (action === 'approve') {
       transaction.status = 'completed';
       transaction.completedAt = new Date();
-      
 
       const notification = new Notification({
         user: transaction.user._id,
@@ -254,11 +289,21 @@ router.post('/withdrawals/:id/process', ensureAuth, ensureAdmin, async (req, res
         message: `Your withdrawal of ${transaction.amount} ${transaction.asset} has been approved.`,
         type: 'success'
       });
-      
       await notification.save();
+
+      emailSubject = "Withdrawal Approved";
+      emailMessage = `
+        <h2>Withdrawal Approved</h2>
+        <p>Hi ${transaction.user.firstName || "User"},</p>
+        <p>Your withdrawal has been approved.</p>
+        <p><strong>Amount:</strong> ${transaction.amount} ${transaction.asset}</p>
+        <p>Status: Completed</p>
+        <br/>
+        <p>Thank you,<br/>Advanced Trading Team</p>
+      `;
     } else if (action === 'reject') {
       transaction.status = 'rejected';
-      
+
       // Return locked funds to user's balance
       const wallet = await Wallet.findOne({ 
         user: transaction.user._id, 
@@ -271,25 +316,45 @@ router.post('/withdrawals/:id/process', ensureAuth, ensureAdmin, async (req, res
         await wallet.save();
       }
       
-      // Create notification for user
       const notification = new Notification({
         user: transaction.user._id,
         title: 'Withdrawal Rejected',
         message: `Your withdrawal of ${transaction.amount} ${transaction.asset} has been rejected.`,
         type: 'error'
       });
-      
       await notification.save();
+
+      emailSubject = "Withdrawal Rejected";
+      emailMessage = `
+        <h2>Withdrawal Rejected</h2>
+        <p>Hi ${transaction.user.firstName || "User"},</p>
+        <p>Unfortunately, your withdrawal request has been rejected.</p>
+        <p><strong>Amount:</strong> ${transaction.amount} ${transaction.asset}</p>
+        <p>Status: Rejected</p>
+        <br/>
+        <p>Thank you,<br/>Advanced Trading Team</p>
+      `;
     }
-    
+
     await transaction.save();
-    
+
+
+    const mailOptions = {
+      from: `"Advanced Trading Support" advancedstrading@gmail.com`,
+      to: transaction.user.email,
+      subject: emailSubject,
+      html: emailMessage
+    };
+
+    await transporter.sendMail(mailOptions);
+
     res.redirect('/admin/withdrawals');
   } catch (err) {
     console.error('Withdrawal processing error:', err);
     res.render('error', { error: err });
   }
 });
+
 
 // Update user status
 router.post('/users/:id/status', ensureAuth, ensureAdmin, async (req, res) => {
@@ -308,8 +373,16 @@ router.post('/users/:id/status', ensureAuth, ensureAdmin, async (req, res) => {
 router.post('/users/:id/kyc', ensureAuth, ensureAdmin, async (req, res) => {
   try {
     const { status } = req.body;
-    await User.findByIdAndUpdate(req.params.id, { kycStatus: status });
-    
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { kycStatus: status },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).render("error", { error: { message: "User not found" } });
+    }
+
     // Create notification for user
     const notification = new Notification({
       user: req.params.id,
@@ -317,15 +390,31 @@ router.post('/users/:id/kyc', ensureAuth, ensureAdmin, async (req, res) => {
       message: `Your KYC verification has been ${status}.`,
       type: status === 'verified' ? 'success' : 'error'
     });
-    
     await notification.save();
-    
+
+    const mailOptions = {
+      from: `"Advanced Trading Support" advancedstrading@gmail.com`,
+      to: user.email,
+      subject: "KYC Verification Status Updated",
+      html: `
+        <h2>KYC Status Update</h2>
+        <p>Hi ${user.firstName || "User"},</p>
+        <p>Your KYC verification status has been updated.</p>
+        <p><strong>Status:</strong> ${status.toUpperCase()}</p>
+        <br/>
+        <p>Thank you,<br/>Advanced Trading Team</p>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+
     res.redirect('/admin/users');
   } catch (err) {
     console.error('KYC update error:', err);
     res.render('error', { error: err });
   }
 });
+
 
 // System settings page
 router.get('/settings', ensureAuth, ensureAdmin, (req, res) => {
