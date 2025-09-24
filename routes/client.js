@@ -7,7 +7,6 @@ const axios = require("axios");
 const cloudinary = require('cloudinary').v2;
 const router = express.Router();
 const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const path = require('path');
 
 cloudinary.config({
