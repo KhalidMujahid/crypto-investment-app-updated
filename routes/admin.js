@@ -255,6 +255,7 @@ router.get('/transactions', ensureAuth, ensureAdmin, async (req, res) => {
     
     res.render('admin/transactions', {
       user: req.user,
+      total,
       transactions,
       currentPage: page,
       totalPages: Math.ceil(total / limit),
