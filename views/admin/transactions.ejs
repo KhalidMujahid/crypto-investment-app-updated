@@ -86,11 +86,11 @@
                         <td class="px-4 py-3 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="w-8 h-8 rounded-full bg-crypto-blue flex items-center justify-center text-white font-bold mr-3">
-                                    <%= transaction.user.firstName.charAt(0) %><%= transaction.user.lastName.charAt(0) %>
+                                    <%= transaction?.user?.firstName.charAt(0) %><%= transaction?.user?.lastName.charAt(0) %>
                                 </div>
                                 <div>
-                                    <div class="text-sm font-medium text-gray-900 dark:text-white"><%= transaction.user.firstName %> <%= transaction.user.lastName %></div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400"><%= transaction.user.email %></div>
+                                    <div class="text-sm font-medium text-gray-900 dark:text-white"><%= transaction?.user?.firstName %> <%= transaction?.user?.lastName %></div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400"><%= transaction?.user?.email %></div>
                                 </div>
                             </div>
                         </td>
