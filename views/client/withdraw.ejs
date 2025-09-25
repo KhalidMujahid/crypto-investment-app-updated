@@ -94,7 +94,7 @@
   </button>
 </form>
 
-<script>
+<!-- <script>
   const amountInput = document.getElementById('amount');
   const youReceive = document.getElementById('youReceive');
   const networkFee = 0.0005;
@@ -104,7 +104,7 @@
     const receive = amount > networkFee ? (amount - networkFee).toFixed(8) : 0;
     youReceive.textContent = receive + ' ETHM';
   });
-</script>
+</script> -->
 
             </div>
         </div>
@@ -169,18 +169,50 @@
 </main>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const amountInput = document.querySelector('input[name="amount"]');
-        const receivedElement = document.querySelector('p.text-lg.font-semibold');
-        
-        amountInput.addEventListener('input', function() {
-            const amount = parseFloat(this.value) || 0;
-            const fee = 0.0005;
-            const received = amount - fee;
-            
-            receivedElement.textContent = received > 0 ? received.toFixed(8) + ' ETHM' : '0.00 ETHM';
-        });
-    });
+document.addEventListener('DOMContentLoaded', function() {
+    const amountInput = document.querySelector('input[name="amount"]');
+    const receivedElement = document.querySelector('p.text-lg.font-semibold');
+
+    let ethmPrice = 0;
+
+    async function fetchPrice() {
+        try {
+            const res = await fetch('https://api.coingecko.com/api/v3/coins/ethereum-meta');
+            const data = await res.json();
+
+            ethmPrice = data.market_data.current_price.usd;
+            console.log("1 ETHM = " + ethmPrice + " USDT");
+
+            calculate();
+        } catch (error) {
+            console.error("Failed to fetch ETHM price:", error);
+            ethmPrice = 0;
+        }
+    }
+
+    function calculate() {
+        const amountUSDT = parseFloat(amountInput.value) || 0;
+        const fee = 0.0005;
+
+        if (ethmPrice > 0) {
+            const ethmAmount = (amountUSDT / ethmPrice) - fee;
+            receivedElement.textContent = ethmAmount > 0
+                ? ethmAmount.toFixed(8) + ' ETHM'
+                : '0.00 ETHM';
+        } else {
+            receivedElement.textContent = 'Fetching price...';
+        }
+    }
+
+    fetchPrice();
+
+    amountInput.addEventListener('input', calculate);
+
+    setInterval(fetchPrice, 60000);
+});
 </script>
+
+
+
 
 <%- include('../partials/footer') %>

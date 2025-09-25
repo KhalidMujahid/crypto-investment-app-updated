@@ -10,8 +10,8 @@ const notificationSchema = new mongoose.Schema({
     default: 'info'
   },
   read: { type: Boolean, default: false },
-  link: String, // Optional link for navigation
-  data: mongoose.Schema.Types.Mixed, // Additional data
+  link: String,
+  data: mongoose.Schema.Types.Mixed,
   createdAt: { type: Date, default: Date.now }
 });
 

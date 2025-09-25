@@ -10,26 +10,45 @@
             <div class="glassmorphism rounded-2xl p-6 shadow-lg">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-semibold text-gray-900 dark:text-white">All Notifications</h2>
-                    <button class="bg-crypto-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                        Mark All as Read
-                    </button>
+<form action="/client/notifications/read-all" method="POST">
+    <button type="submit" class="bg-crypto-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+        Mark All as Read
+    </button>
+</form>
+
                 </div>
                 
                 <div class="space-y-4">
-                    <% for(let i = 0; i < 10; i++) { %>
-                    <div class="p-4 rounded-lg border border-gray-200 dark:border-gray-700 <%= i < 3 ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800' %>">
-                        <div class="flex justify-between">
-                            <h3 class="font-medium text-gray-900 dark:text-white">Deposit Received</h3>
-                            <span class="text-xs text-gray-500 dark:text-gray-400">2 hours ago</span>
-                        </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Your deposit of 0.05 BTC has been confirmed and credited to your account.</p>
-                        <div class="mt-2 flex space-x-2">
-                            <button class="text-xs text-crypto-blue hover:text-blue-600">View Transaction</button>
-                            <button class="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Mark as Read</button>
-                        </div>
-                    </div>
-                    <% } %>
-                </div>
+    <% if (notifications.length > 0) { %>
+        <% notifications.forEach(notification => { %>
+        <div class="p-4 rounded-lg border border-gray-200 dark:border-gray-700 <%= !notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800' %>">
+            <div class="flex justify-between">
+                <h3 class="font-medium text-gray-900 dark:text-white"><%= notification.title %></h3>
+                <span class="text-xs text-gray-500 dark:text-gray-400">
+                    <%= new Date(notification.createdAt).toLocaleString() %>
+                </span>
+            </div>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1"><%= notification.message %></p>
+            
+            <div class="mt-2 flex space-x-2">
+                <% if (notification.link) { %>
+                    <a href="<%= notification.link %>" class="text-xs text-crypto-blue hover:text-blue-600">View</a>
+                <% } %>
+                <% if (!notification.read) { %>
+                    <form action="/client/notifications/<%= notification._id %>/read" method="POST">
+                        <button type="submit" class="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                            Mark as Read
+                        </button>
+                    </form>
+                <% } %>
+            </div>
+        </div>
+        <% }) %>
+    <% } else { %>
+        <p class="text-gray-500 dark:text-gray-400">No notifications yet.</p>
+    <% } %>
+</div>
+
 
                 <!-- Pagination -->
                 <div class="mt-6 flex justify-center">

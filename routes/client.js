@@ -124,12 +124,49 @@ router.get('/profile', ensureAuth, (req, res) => {
 });
 
 // Notifications page
+
 router.get('/notifications', ensureAuth, async (req, res) => {
   try {
-    // Fetch user notifications from database
-    res.render('client/notifications', { user: req.user, title: 'Notifications' });
+    const notifications = await Notification.find({ user: req.user._id })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.render('client/notifications', { 
+      user: req.user, 
+      title: 'Notifications',
+      notifications 
+    });
   } catch (err) {
+    console.error(err);
     res.render('error', { error: err });
+  }
+});
+
+// Mark single notification as read
+router.post('/notifications/:id/read', ensureAuth, async (req, res) => {
+  try {
+    await Notification.findOneAndUpdate(
+      { _id: req.params.id, user: req.user._id },
+      { $set: { read: true } }
+    );
+    res.redirect('/client/notifications');
+  } catch (err) {
+    console.error(err);
+    res.redirect('/client/notifications');
+  }
+});
+
+// Mark all as read
+router.post('/notifications/read-all', ensureAuth, async (req, res) => {
+  try {
+    await Notification.updateMany(
+      { user: req.user._id, read: false },
+      { $set: { read: true } }
+    );
+    res.redirect('/client/notifications');
+  } catch (err) {
+    console.error(err);
+    res.redirect('/client/notifications');
   }
 });
 
