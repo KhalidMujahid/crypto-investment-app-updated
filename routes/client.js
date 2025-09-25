@@ -2,6 +2,8 @@ const express = require('express');
 const { ensureAuth } = require('../middleware/auth');
 const Transaction = require('../models/Transaction');
 const Wallet = require('../models/Wallet');
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
 const Notification = require("../models/Notification");
 const nodemailer = require("nodemailer");
 const axios = require("axios");
@@ -9,6 +11,7 @@ const cloudinary = require('cloudinary').v2;
 const router = express.Router();
 const multer = require("multer");
 const path = require('path');
+const verifyPin = require('../middleware/verifyPin');
 
 cloudinary.config({
   cloud_name: process.env.YOUR_CLOUD_NAME,
@@ -123,8 +126,42 @@ router.get('/profile', ensureAuth, (req, res) => {
   res.render('client/profile', { user: req.user, title: 'Profile' });
 });
 
-// Notifications page
+// Set / Change Withdrawal PIN
+router.post('/set-pin', ensureAuth, async (req, res) => {
+  try {
+    const { pin, confirmPin } = req.body;
 
+    if (!pin || !confirmPin) {
+      req.flash('error', 'PIN fields cannot be empty');
+      return res.redirect('/client/profile');
+    }
+
+    if (pin !== confirmPin) {
+      req.flash('error', 'PINs do not match');
+      return res.redirect('/client/profile');
+    }
+
+    if (pin.length < 4 || pin.length > 6) {
+      req.flash('error', 'PIN must be 4 to 6 digits');
+      return res.redirect('/client/profile');
+    }
+
+    const hashedPin = await bcrypt.hash(pin, 12);
+
+    const user = await User.findById(req.user.id);
+    user.pin = hashedPin;
+    await user.save();
+
+    req.flash('success', 'Withdrawal PIN set successfully');
+    res.redirect('/client/profile');
+  } catch (err) {
+    console.error(err);
+    req.flash('error', 'Something went wrong');
+    res.redirect('/client/profile');
+  }
+});
+
+// Notifications page
 router.get('/notifications', ensureAuth, async (req, res) => {
   try {
     const notifications = await Notification.find({ user: req.user._id })
@@ -190,7 +227,7 @@ router.post('/deposit', ensureAuth, async (req, res) => {
     const notification = new Notification({
       user: req.user.id,
       title: 'Deposit Initiated',
-      message: `Your deposit of ${amount} ${currency} is being processed.`,
+      message: `Your deposit of $${amount} ${currency} is being processed.`,
       type: 'transaction'
     });
     
@@ -204,9 +241,9 @@ router.post('/deposit', ensureAuth, async (req, res) => {
 });
 
 // Handle withdrawal request
-router.post('/withdraw', ensureAuth, async (req, res) => {
+router.post('/withdraw', ensureAuth,verifyPin, async (req, res) => {
   try {
-    const { amount, address } = req.body;
+    const { amount, address,wallet: asset } = req.body;
 
     if (req.user.kycStatus !== 'verified') {
       req.flash('error', 'Your account is not verified. Please complete KYC to withdraw.');
@@ -237,7 +274,7 @@ router.post('/withdraw', ensureAuth, async (req, res) => {
     const transaction = new Transaction({
       user: req.user.id,
       type: 'withdrawal',
-      asset: "BTC",
+      asset,
       amount: parseFloat(amount),
       address,
       status: 'pending',
@@ -254,7 +291,7 @@ router.post('/withdraw', ensureAuth, async (req, res) => {
     const notification = new Notification({
       user: req.user.id,
       title: 'Withdrawal Requested',
-      message: `Your withdrawal of ${amount} BTC is pending approval.`,
+      message: `Your withdrawal of $${amount} is pending approval.`,
       type: 'transaction'
     });
 
@@ -268,7 +305,7 @@ router.post('/withdraw', ensureAuth, async (req, res) => {
         <h2>Withdrawal Request</h2>
         <p>Hi ${req.user.firstName || 'User'},</p>
         <p>Your withdrawal request has been placed successfully.</p>
-        <p><strong>Amount:</strong> ${amount} BTC</p>
+        <p><strong>Amount:</strong> $${amount}</p>
         <p><strong>Address:</strong> ${address}</p>
         <p>Status: Pending Approval</p>
         <br/>

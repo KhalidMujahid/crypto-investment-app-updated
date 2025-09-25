@@ -14,8 +14,8 @@ const transactionSchema = new mongoose.Schema({
     enum: ['pending', 'completed', 'failed', 'rejected', 'processing'], 
     default: 'pending' 
   },
-  address: String, // For deposits/withdrawals
-  txHash: String, // Blockchain transaction hash
+  address: String,
+  txHash: String,
   confirmations: { type: Number, default: 0 },
   requiredConfirmations: { type: Number, default: 3 },
   fee: { type: Number, default: 0 },

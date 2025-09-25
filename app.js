@@ -18,8 +18,7 @@ mongoose
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
-// Flash middleware
-app.use(flash());
+
 
 // Session configuration
 app.use(
@@ -31,6 +30,15 @@ app.use(
     cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 },
   })
 );
+
+
+app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+});
 
 // View engine setup
 app.set("view engine", "ejs");

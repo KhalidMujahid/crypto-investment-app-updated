@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
+  profile: { type: String, default: "default.png" },
+  pin: { type: String },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
   kycStatus: { 
     type: String, 
