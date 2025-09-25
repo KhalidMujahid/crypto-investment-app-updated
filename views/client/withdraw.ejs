@@ -57,20 +57,20 @@
         required
       >
       <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-        <span class="text-gray-500 dark:text-gray-400">BTC</span>
+        <span class="text-gray-500 dark:text-gray-400">$</span>
       </div>
     </div>
-    <p class="mt-1 text-xs text-gray-500">Minimum withdrawal: 0.0005 BTC</p>
+    <p class="mt-1 text-xs text-gray-500">Minimum withdrawal: 0.0005 $</p>
   </div>
 
   <div>
     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Network Fee</label>
-    <p class="text-sm text-gray-600 dark:text-gray-400">0.0005 BTC (Estimated)</p>
+    <p class="text-sm text-gray-600 dark:text-gray-400">0.0005 $ (Estimated)</p>
   </div>
 
   <div>
     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">You Will Receive</label>
-    <p id="youReceive" class="text-lg font-semibold text-gray-900 dark:text-white">0.00 BTC</p>
+    <p id="youReceive" class="text-lg font-semibold text-gray-900 dark:text-white">0.00 ETHM</p>
   </div>
 
   <div class="flex items-start">
@@ -102,7 +102,7 @@
   amountInput.addEventListener('input', () => {
     const amount = parseFloat(amountInput.value) || 0;
     const receive = amount > networkFee ? (amount - networkFee).toFixed(8) : 0;
-    youReceive.textContent = receive + ' BTC';
+    youReceive.textContent = receive + ' ETHM';
   });
 </script>
 
@@ -178,7 +178,7 @@
             const fee = 0.0005;
             const received = amount - fee;
             
-            receivedElement.textContent = received > 0 ? received.toFixed(8) + ' BTC' : '0.00 BTC';
+            receivedElement.textContent = received > 0 ? received.toFixed(8) + ' ETHM' : '0.00 ETHM';
         });
     });
 </script>
