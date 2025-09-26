@@ -287,7 +287,7 @@ router.post('/withdrawals/:id/process', ensureAuth, ensureAdmin, async (req, res
       const notification = new Notification({
         user: transaction.user._id,
         title: 'Withdrawal Approved',
-        message: `Your withdrawal of ${transaction.amount} ${transaction.asset} has been approved.`,
+        message: `Your withdrawal of $${transaction.amount} has been approved.`,
         type: 'success'
       });
       await notification.save();
@@ -297,7 +297,7 @@ router.post('/withdrawals/:id/process', ensureAuth, ensureAdmin, async (req, res
         <h2>Withdrawal Approved</h2>
         <p>Hi ${transaction.user.firstName || "User"},</p>
         <p>Your withdrawal has been approved.</p>
-        <p><strong>Amount:</strong> ${transaction.amount} ${transaction.asset}</p>
+        <p><strong>Amount:</strong> $${transaction.amount}</p>
         <p>Status: Completed</p>
         <br/>
         <p>Thank you,<br/>Advanced Trading Team</p>
@@ -320,7 +320,7 @@ router.post('/withdrawals/:id/process', ensureAuth, ensureAdmin, async (req, res
       const notification = new Notification({
         user: transaction.user._id,
         title: 'Withdrawal Rejected',
-        message: `Your withdrawal of ${transaction.amount} ${transaction.asset} has been rejected.`,
+        message: `Your withdrawal of $${transaction.amount} has been rejected.`,
         type: 'error'
       });
       await notification.save();
@@ -330,7 +330,7 @@ router.post('/withdrawals/:id/process', ensureAuth, ensureAdmin, async (req, res
         <h2>Withdrawal Rejected</h2>
         <p>Hi ${transaction.user.firstName || "User"},</p>
         <p>Unfortunately, your withdrawal request has been rejected.</p>
-        <p><strong>Amount:</strong> ${transaction.amount} ${transaction.asset}</p>
+        <p><strong>Amount:</strong> $${transaction.amount}</p>
         <p>Status: Rejected</p>
         <br/>
         <p>Thank you,<br/>Advanced Trading Team</p>
