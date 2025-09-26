@@ -1,17 +1,17 @@
-const express = require('express');
-const { ensureAuth } = require('../middleware/auth');
-const Transaction = require('../models/Transaction');
-const Wallet = require('../models/Wallet');
+const express = require("express");
+const { ensureAuth } = require("../middleware/auth");
+const Transaction = require("../models/Transaction");
+const Wallet = require("../models/Wallet");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const Notification = require("../models/Notification");
 const nodemailer = require("nodemailer");
 const axios = require("axios");
-const cloudinary = require('cloudinary').v2;
+const cloudinary = require("cloudinary").v2;
 const router = express.Router();
 const multer = require("multer");
-const path = require('path');
-const verifyPin = require('../middleware/verifyPin');
+const path = require("path");
+const verifyPin = require("../middleware/verifyPin");
 
 cloudinary.config({
   cloud_name: process.env.YOUR_CLOUD_NAME,
@@ -19,13 +19,12 @@ cloudinary.config({
   api_secret: process.env.YOUR_API_SECRET,
 });
 
-
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
     user: "advancedstrading@gmail.com",
-    pass: "viwh iefs gncz ggpl "
-  }
+    pass: "viwh iefs gncz ggpl ",
+  },
 });
 
 const storage = multer.diskStorage({});
@@ -44,8 +43,7 @@ router.get("/dashboard", ensureAuth, async (req, res) => {
       totalValue += wallet.balance * (wallet.currentPrice || 1);
     });
 
-
-   res.render("client/dashboard", {
+    res.render("client/dashboard", {
       user: req.user,
       transactions,
       wallets,
@@ -69,29 +67,29 @@ router.get("/dashboard", ensureAuth, async (req, res) => {
 // });
 
 // Transactions page
-router.get('/transactions', ensureAuth, async (req, res) => {
+router.get("/transactions", ensureAuth, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    
+
     const transactions = await Transaction.find({ user: req.user.id })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
-    
+
     const total = await Transaction.countDocuments({ user: req.user.id });
-    
-    res.render('client/transactions', {
+
+    res.render("client/transactions", {
       user: req.user,
       transactions,
       currentPage: page,
       total: total,
       totalPages: Math.ceil(total / limit),
-      title: 'Transactions'
+      title: "Transactions",
     });
   } catch (err) {
-    res.render('error', { error: err });
+    res.render("error", { error: err });
   }
 });
 
@@ -100,7 +98,7 @@ router.get('/transactions', ensureAuth, async (req, res) => {
 //   try {
 //     // Get deposit wallet address from system settings or database
 //     const depositWallet = await Wallet.findOne({ isDepositWallet: true });
-    
+
 //     res.render('client/deposit', {
 //       user: req.user,
 //       depositAddress: depositWallet?.address,
@@ -112,38 +110,39 @@ router.get('/transactions', ensureAuth, async (req, res) => {
 // });
 
 // Withdrawal page
-router.get('/withdraw', ensureAuth, async (req, res) => {
-  try {
-    const wallets = await Wallet.find({ user: req.user.id, balance: { $gt: 0 } });
-    res.render('client/withdraw', { user: req.user,error: null,success: null, title: 'Withdraw' });
-  } catch (err) {
-    res.render('error', { error: err });
-  }
+router.get("/withdraw", ensureAuth, async (req, res) => {
+    res.render("client/withdraw", {
+      user: req.user,
+      title: "Withdraw",
+    });
 });
 
 // Profile page
-router.get('/profile', ensureAuth, (req, res) => {
-  res.render('client/profile', { user: req.user, title: 'Profile' });
+router.get("/profile", ensureAuth, (req, res) => {
+  res.render("client/profile", {
+    user: req.user,
+    title: "Profile",
+  });
 });
 
 // Set / Change Withdrawal PIN
-router.post('/set-pin', ensureAuth, async (req, res) => {
+router.post("/set-pin", ensureAuth, async (req, res) => {
   try {
     const { pin, confirmPin } = req.body;
 
     if (!pin || !confirmPin) {
-      req.flash('error', 'PIN fields cannot be empty');
-      return res.redirect('/client/profile');
+      req.flash("error", "PIN fields cannot be empty");
+      return res.redirect("/client/profile");
     }
 
     if (pin !== confirmPin) {
-      req.flash('error', 'PINs do not match');
-      return res.redirect('/client/profile');
+      req.flash("error", "PINs do not match");
+      return res.redirect("/client/profile");
     }
 
     if (pin.length < 4 || pin.length > 6) {
-      req.flash('error', 'PIN must be 4 to 6 digits');
-      return res.redirect('/client/profile');
+      req.flash("error", "PIN must be 4 to 6 digits");
+      return res.redirect("/client/profile");
     }
 
     const hashedPin = await bcrypt.hash(pin, 12);
@@ -152,107 +151,112 @@ router.post('/set-pin', ensureAuth, async (req, res) => {
     user.pin = hashedPin;
     await user.save();
 
-    req.flash('success', 'Withdrawal PIN set successfully');
-    res.redirect('/client/profile');
+    req.flash("success", "Withdrawal PIN set successfully");
+    res.redirect("/client/profile");
   } catch (err) {
     console.error(err);
-    req.flash('error', 'Something went wrong');
-    res.redirect('/client/profile');
+    req.flash("error", "Something went wrong");
+    res.redirect("/client/profile");
   }
 });
 
 // Notifications page
-router.get('/notifications', ensureAuth, async (req, res) => {
+router.get("/notifications", ensureAuth, async (req, res) => {
   try {
     const notifications = await Notification.find({ user: req.user._id })
       .sort({ createdAt: -1 })
       .lean();
 
-    res.render('client/notifications', { 
-      user: req.user, 
-      title: 'Notifications',
-      notifications 
+    res.render("client/notifications", {
+      user: req.user,
+      title: "Notifications",
+      notifications,
     });
   } catch (err) {
     console.error(err);
-    res.render('error', { error: err });
+    res.render("error", { error: err });
   }
 });
 
 // Mark single notification as read
-router.post('/notifications/:id/read', ensureAuth, async (req, res) => {
+router.post("/notifications/:id/read", ensureAuth, async (req, res) => {
   try {
     await Notification.findOneAndUpdate(
       { _id: req.params.id, user: req.user._id },
       { $set: { read: true } }
     );
-    res.redirect('/client/notifications');
+    res.redirect("/client/notifications");
   } catch (err) {
     console.error(err);
-    res.redirect('/client/notifications');
+    res.redirect("/client/notifications");
   }
 });
 
 // Mark all as read
-router.post('/notifications/read-all', ensureAuth, async (req, res) => {
+router.post("/notifications/read-all", ensureAuth, async (req, res) => {
   try {
     await Notification.updateMany(
       { user: req.user._id, read: false },
       { $set: { read: true } }
     );
-    res.redirect('/client/notifications');
+    res.redirect("/client/notifications");
   } catch (err) {
     console.error(err);
-    res.redirect('/client/notifications');
+    res.redirect("/client/notifications");
   }
 });
 
 // Handle deposit form submission
-router.post('/deposit', ensureAuth, async (req, res) => {
+router.post("/deposit", ensureAuth, async (req, res) => {
   try {
     const { amount, currency } = req.body;
-    
+
     // Create a pending deposit transaction
     const transaction = new Transaction({
       user: req.user.id,
-      type: 'deposit',
+      type: "deposit",
       asset: currency,
       amount: parseFloat(amount),
-      status: 'pending'
+      status: "pending",
     });
-    
+
     await transaction.save();
-    
+
     // Create notification
     const notification = new Notification({
       user: req.user.id,
-      title: 'Deposit Initiated',
+      title: "Deposit Initiated",
       message: `Your deposit of $${amount} ${currency} is being processed.`,
-      type: 'transaction'
+      type: "transaction",
     });
-    
+
     await notification.save();
-    
-    res.redirect('/client/transactions');
+
+    res.redirect("/client/transactions");
   } catch (err) {
-    console.error('Deposit error:', err);
-    res.render('error', { error: err });
+    console.error("Deposit error:", err);
+    res.render("error", { error: err });
   }
 });
 
 // Handle withdrawal request
-router.post('/withdraw', ensureAuth,verifyPin, async (req, res) => {
+router.post("/withdraw", ensureAuth, verifyPin, async (req, res) => {
   try {
-    const { amount, address,wallet: asset } = req.body;
+    const { amount, address, wallet: asset } = req.body;
 
-    if (req.user.kycStatus !== 'verified') {
-      req.flash('error', 'Your account is not verified. Please complete KYC to withdraw.');
-      return res.redirect('/client/withdraw');
+    if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+      req.flash("error", "Please enter a valid withdrawal amount.");
+      return res.redirect("/client/withdraw");
+    }
+
+    if (req.user.kycStatus !== "verified") {
+      req.flash("error", "Your account is not verified. Please complete KYC to withdraw.");
+      return res.redirect("/client/withdraw");
     }
 
     const lastWithdrawal = await Transaction.findOne({
       user: req.user.id,
-      type: 'withdrawal'
+      type: "withdrawal",
     }).sort({ createdAt: -1 });
 
     if (lastWithdrawal) {
@@ -260,91 +264,92 @@ router.post('/withdraw', ensureAuth,verifyPin, async (req, res) => {
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
       if (lastWithdrawal.createdAt > sevenDaysAgo) {
-        req.flash('error', 'You can only place a new withdrawal 7 days after your last request.');
-        return res.redirect('/client/withdraw');
+        req.flash("error", "You can only place a new withdrawal 7 days after your last request.");
+        return res.redirect("/client/withdraw");
       }
     }
 
     const wallet = await Wallet.findOne({ user: req.user.id });
-    if (!wallet || wallet.balance < parseFloat(amount)) {
-      req.flash('error', 'Insufficient balance');
-      return res.redirect('/client/withdraw');
+
+    const amountNum = parseFloat(amount);
+
+    const balance = parseFloat(wallet?.balance) || 0;
+
+    if (balance < amountNum) {
+      req.flash("error", "Insufficient balance to process this withdrawal.");
+      return res.redirect("/client/withdraw");
     }
 
     const transaction = new Transaction({
       user: req.user.id,
-      type: 'withdrawal',
+      type: "withdrawal",
       asset,
-      amount: parseFloat(amount),
+      amount: amountNum,
       address,
-      status: 'pending',
-      createdAt: new Date()
+      status: "pending",
     });
-
     await transaction.save();
 
-    // Update wallet
-    wallet.lockedBalance += parseFloat(amount);
-    wallet.balance -= parseFloat(amount);
+    wallet.lockedBalance += amountNum;
+    wallet.balance -= amountNum;
     await wallet.save();
 
     const notification = new Notification({
       user: req.user.id,
-      title: 'Withdrawal Requested',
-      message: `Your withdrawal of $${amount} is pending approval.`,
-      type: 'transaction'
+      title: "Withdrawal Requested",
+      message: `Your withdrawal of $${amountNum} is pending approval.`,
+      type: "transaction",
     });
-
     await notification.save();
 
     const mailOptions = {
-      from: `Advanced Trading Support advancedstrading@gmail.com`,
+      from: `Advanced Trading Support <advancedstrading@gmail.com>`,
       to: req.user.email,
       subject: "Withdrawal Request Submitted",
       html: `
         <h2>Withdrawal Request</h2>
-        <p>Hi ${req.user.firstName || 'User'},</p>
+        <p>Hi ${req.user.firstName || "User"},</p>
         <p>Your withdrawal request has been placed successfully.</p>
-        <p><strong>Amount:</strong> $${amount}</p>
+        <p><strong>Amount:</strong> $${amountNum}</p>
         <p><strong>Address:</strong> ${address}</p>
         <p>Status: Pending Approval</p>
         <br/>
         <p>Thank you,<br/>Advanced Trading Team</p>
-      `
+      `,
     };
-
     await transporter.sendMail(mailOptions);
 
-    res.redirect('/client/transactions');
+    req.flash("success", "Withdrawal request submitted successfully.");
+    return res.redirect("/client/withdraw");
+
   } catch (err) {
-    console.error('Withdrawal error:', err);
-    res.render('error', { error: err });
+    console.error("Withdrawal error:", err);
+    req.flash("error", "Something went wrong while processing your withdrawal.");
+    return res.redirect("/client/withdraw");
   }
 });
 
 
-
-
 // Get notifications API endpoint
-router.get('/notifications/data', ensureAuth, async (req, res) => {
+router.get("/notifications/data", ensureAuth, async (req, res) => {
   try {
     const notifications = await Notification.find({ user: req.user.id })
       .sort({ createdAt: -1 })
       .limit(10);
-    
+
     res.json(notifications);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch notifications' });
+    res.status(500).json({ error: "Failed to fetch notifications" });
   }
 });
 
 // Mark notification as read
-router.post('/notifications/:id/read', ensureAuth, async (req, res) => {
+router.post("/notifications/:id/read", ensureAuth, async (req, res) => {
   try {
     await Notification.findByIdAndUpdate(req.params.id, { read: true });
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to mark notification as read' });
+    res.status(500).json({ error: "Failed to mark notification as read" });
   }
 });
 
@@ -377,49 +382,51 @@ router.post(
       });
 
       await notification.save();
-
+      
+      req.flash("success","Your KYC documents have been submitted for verification.");
       res.redirect("/client/profile");
     } catch (err) {
       console.error("KYC upload error:", err);
-      res.render("error", { error: err });
+      req.flash("error","An error occured please try again later");
+      return res.redirect("/client/profile");
     }
   }
 );
 
 // Toggle 2FA
-router.post('/toggle-2fa', ensureAuth, async (req, res) => {
+router.post("/toggle-2fa", ensureAuth, async (req, res) => {
   try {
     req.user.twoFactorEnabled = !req.user.twoFactorEnabled;
     await req.user.save();
-    
-    res.redirect('/client/profile');
+
+    res.redirect("/client/profile");
   } catch (err) {
-    console.error('2FA toggle error:', err);
-    res.render('error', { error: err });
+    console.error("2FA toggle error:", err);
+    res.render("error", { error: err });
   }
 });
 
 // Update profile
-router.post('/profile', ensureAuth, async (req, res) => {
+router.post("/profile", ensureAuth, async (req, res) => {
   try {
     const { firstName, lastName, email, theme, notifications } = req.body;
-    
+
     req.user.firstName = firstName;
     req.user.lastName = lastName;
     req.user.email = email;
     req.user.preferences.theme = theme;
     req.user.preferences.notifications = {
-      email: notifications && notifications.includes('email'),
-      push: notifications && notifications.includes('push'),
-      priceAlerts: notifications && notifications.includes('priceAlerts')
+      email: notifications && notifications.includes("email"),
+      push: notifications && notifications.includes("push"),
+      priceAlerts: notifications && notifications.includes("priceAlerts"),
     };
-    
+
     await req.user.save();
-    
-    res.redirect('/client/profile');
+
+    res.redirect("/client/profile");
   } catch (err) {
-    console.error('Profile update error:', err);
-    res.render('error', { error: err });
+    console.error("Profile update error:", err);
+    res.render("error", { error: err });
   }
 });
 
