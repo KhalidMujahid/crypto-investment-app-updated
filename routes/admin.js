@@ -386,7 +386,7 @@ router.post('/users/:id/kyc', ensureAuth, ensureAdmin, async (req, res) => {
 
     // Create notification for user
     const notification = new Notification({
-      user: req.params.id,
+      user: user._id,
       title: 'KYC Status Updated',
       message: `Your KYC verification has been ${status}.`,
       type: status === 'verified' ? 'success' : 'error'
