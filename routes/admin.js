@@ -222,20 +222,18 @@ router.post("/users/:id/kyc/update", async (req, res) => {
 
 // Withdrawal requests
 router.get('/withdrawals', ensureAuth, ensureAdmin, async (req, res) => {
-  try {
     const pendingWithdrawals = await Transaction.find({ 
       type: 'withdrawal', 
       status: 'pending' 
     }).populate('user');
+
+    console.log(pendingWithdrawals);
     
     res.render('admin/withdrawals', {
       user: req.user,
       withdrawals: pendingWithdrawals,
       title: 'Withdrawal Requests'
     });
-  } catch (err) {
-    res.render('error', { error: err });
-  }
 });
 
 // Transaction oversight

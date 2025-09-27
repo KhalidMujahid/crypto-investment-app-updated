@@ -32,11 +32,11 @@ const upload = multer({ storage });
 
 router.get("/dashboard", ensureAuth, async (req, res) => {
   try {
-    const transactions = await Transaction.find({ user: req.user.id })
+    const transactions = await Transaction.find({ user: req.user._id })
       .sort({ createdAt: -1 })
       .limit(5);
 
-    const wallets = await Wallet.find({ user: req.user.id });
+    const wallets = await Wallet.find({ user: req.user._id });
 
     let totalValue = 0;
     wallets.forEach((wallet) => {
@@ -73,12 +73,12 @@ router.get("/transactions", ensureAuth, async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const transactions = await Transaction.find({ user: req.user.id })
+    const transactions = await Transaction.find({ user: req.user._id })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    const total = await Transaction.countDocuments({ user: req.user.id });
+    const total = await Transaction.countDocuments({ user: req.user._id });
 
     res.render("client/transactions", {
       user: req.user,
@@ -147,7 +147,7 @@ router.post("/set-pin", ensureAuth, async (req, res) => {
 
     const hashedPin = await bcrypt.hash(pin, 12);
 
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     user.pin = hashedPin;
     await user.save();
 
@@ -162,7 +162,6 @@ router.post("/set-pin", ensureAuth, async (req, res) => {
 
 // Notifications page
 router.get("/notifications", ensureAuth, async (req, res) => {
-  try {
     const notifications = await Notification.find({ user: req.user._id })
       .sort({ createdAt: -1 })
       .lean();
@@ -172,10 +171,6 @@ router.get("/notifications", ensureAuth, async (req, res) => {
       title: "Notifications",
       notifications,
     });
-  } catch (err) {
-    console.error(err);
-    res.render("error", { error: err });
-  }
 });
 
 // Mark single notification as read
@@ -213,7 +208,7 @@ router.post("/deposit", ensureAuth, async (req, res) => {
 
     // Create a pending deposit transaction
     const transaction = new Transaction({
-      user: req.user.id,
+      user: req.user._id,
       type: "deposit",
       asset: currency,
       amount: parseFloat(amount),
@@ -224,7 +219,7 @@ router.post("/deposit", ensureAuth, async (req, res) => {
 
     // Create notification
     const notification = new Notification({
-      user: req.user.id,
+      user: req.user._id,
       title: "Deposit Initiated",
       message: `Your deposit of $${amount} ${currency} is being processed.`,
       type: "transaction",
@@ -255,7 +250,7 @@ router.post("/withdraw", ensureAuth, verifyPin, async (req, res) => {
     }
 
     const lastWithdrawal = await Transaction.findOne({
-      user: req.user.id,
+      user: req.user._id,
       type: "withdrawal",
     }).sort({ createdAt: -1 });
 
@@ -269,7 +264,7 @@ router.post("/withdraw", ensureAuth, verifyPin, async (req, res) => {
       }
     }
 
-    const wallet = await Wallet.findOne({ user: req.user.id });
+    const wallet = await Wallet.findOne({ user: req.user._id });
 
     const amountNum = parseFloat(amount);
 
@@ -281,7 +276,7 @@ router.post("/withdraw", ensureAuth, verifyPin, async (req, res) => {
     }
 
     const transaction = new Transaction({
-      user: req.user.id,
+      user: req.user._id,
       type: "withdrawal",
       asset,
       amount: amountNum,
@@ -333,7 +328,7 @@ router.post("/withdraw", ensureAuth, verifyPin, async (req, res) => {
 // Get notifications API endpoint
 router.get("/notifications/data", ensureAuth, async (req, res) => {
   try {
-    const notifications = await Notification.find({ user: req.user.id })
+    const notifications = await Notification.find({ user: req.user._id })
       .sort({ createdAt: -1 })
       .limit(10);
 
@@ -374,8 +369,10 @@ router.post(
 
       await req.user.save();
 
+      // console.log(req.user);
+
       const notification = new Notification({
-        user: req.user.id,
+        user: req.user._id,
         title: "KYC Documents Submitted",
         message: "Your KYC documents have been submitted for verification.",
         type: "info",
