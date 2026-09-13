@@ -1,143 +1,107 @@
 <%- include('../partials/head', {title: title}) %>
 <%- include('../partials/client-header') %>
 
-<main class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Notifications</h1>
+<main class="page">
 
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <!-- Notification List -->
-        <div class="lg:col-span-3">
-            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">All Notifications</h2>
-<form action="/client/notifications/read-all" method="POST">
-    <button type="submit" class="bg-crypto-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-        Mark All as Read
-    </button>
-</form>
+  <div class="page-head">
+    <div>
+      <h2 class="page-title">Notifications</h2>
+      <p class="page-sub">Account activity, transaction updates and security alerts.</p>
+    </div>
+    <form action="/client/notifications/read-all" method="POST">
+      <button type="submit" class="btn btn-secondary">Mark all as read</button>
+    </form>
+  </div>
 
-                </div>
-                
-                <div class="space-y-4">
-    <% if (notifications.length > 0) { %>
-        <% notifications.forEach(notification => { %>
-        <div class="p-4 rounded-lg border border-gray-200 dark:border-gray-700 <%= !notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800' %>">
-            <div class="flex justify-between">
-                <h3 class="font-medium text-gray-900 dark:text-white"><%= notification.title %></h3>
-                <span class="text-xs text-gray-500 dark:text-gray-400">
-                    <%= new Date(notification.createdAt).toLocaleString() %>
-                </span>
-            </div>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1"><%= notification.message %></p>
-            
-            <div class="mt-2 flex space-x-2">
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+    <!-- List -->
+    <div class="card lg:col-span-2">
+      <div class="card-header">
+        <h3 class="card-title">All notifications</h3>
+        <span class="text-sm muted"><%= notifications.length %> total</span>
+      </div>
+
+      <div class="divide-y divide-slate-100 dark:divide-slate-800">
+        <% if (notifications.length === 0) { %>
+          <div class="empty">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
+            <p class="text-sm font-medium text-slate-700 dark:text-slate-200">You're all caught up</p>
+            <p class="text-sm muted">New notifications will appear here.</p>
+          </div>
+        <% } %>
+
+        <% notifications.forEach(function (notification) { %>
+          <div class="flex gap-4 px-5 py-4 <%= !notification.read ? 'bg-brand-50/40 dark:bg-brand-500/5' : '' %>">
+            <span class="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full
+              <%= notification.type === 'success' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'
+                 : notification.type === 'error' ? 'bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400'
+                 : notification.type === 'warning' ? 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400'
+                 : notification.type === 'security' ? 'bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400'
+                 : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400' %>">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" style="width:1.15rem;height:1.15rem" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
+            </span>
+
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h4 class="text-sm font-semibold text-slate-900 dark:text-white">
+                  <%= notification.title %>
+                  <% if (!notification.read) { %><span class="ml-2 inline-block h-1.5 w-1.5 rounded-full bg-brand-500 align-middle"></span><% } %>
+                </h4>
+                <time class="text-xs muted"><%= new Date(notification.createdAt).toLocaleString() %></time>
+              </div>
+              <p class="mt-1 text-sm text-slate-600 dark:text-slate-400"><%= notification.message %></p>
+
+              <div class="mt-2 flex items-center gap-4">
                 <% if (notification.link) { %>
-                    <a href="<%= notification.link %>" class="text-xs text-crypto-blue hover:text-blue-600">View</a>
+                  <a href="<%= notification.link %>" class="text-xs font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400">View</a>
                 <% } %>
                 <% if (!notification.read) { %>
-                    <form action="/client/notifications/<%= notification._id %>/read" method="POST">
-                        <button type="submit" class="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-                            Mark as Read
-                        </button>
-                    </form>
+                  <form action="/client/notifications/<%= notification._id %>/read" method="POST">
+                    <button type="submit" class="text-xs font-medium muted hover:text-slate-700 dark:hover:text-slate-200">Mark as read</button>
+                  </form>
                 <% } %>
+              </div>
             </div>
-        </div>
-        <% }) %>
-    <% } else { %>
-        <p class="text-gray-500 dark:text-gray-400">No notifications yet.</p>
-    <% } %>
-</div>
-
-
-                <!-- Pagination -->
-                <div class="mt-6 flex justify-center">
-                    <div class="flex space-x-2">
-                        <button class="px-3 py-1 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors">
-                            Previous
-                        </button>
-                        <button class="px-3 py-1 bg-crypto-blue text-white rounded-lg">
-                            1
-                        </button>
-                        <button class="px-3 py-1 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors">
-                            2
-                        </button>
-                        <button class="px-3 py-1 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors">
-                            Next
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Notification Settings -->
-        <div class="space-y-6">
-            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Notification Settings</h2>
-                
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Email Notifications</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer" checked>
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-crypto-blue"></div>
-                        </label>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Push Notifications</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer" checked>
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-crypto-blue"></div>
-                        </label>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">SMS Notifications</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-crypto-blue"></div>
-                        </label>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Price Alerts</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-crypto-blue"></div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Notification Types</h2>
-                
-                <div class="space-y-3">
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 rounded-full bg-crypto-blue mr-2"></div>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">Transactions</span>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 rounded-full bg-crypto-green mr-2"></div>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">Security</span>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 rounded-full bg-crypto-purple mr-2"></div>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">Market Updates</span>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 rounded-full bg-crypto-yellow mr-2"></div>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">Promotions</span>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 rounded-full bg-crypto-pink mr-2"></div>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">Account</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+          </div>
+        <% }); %>
+      </div>
     </div>
+
+    <!-- Preferences -->
+    <div class="space-y-6">
+      <div class="card card-body">
+        <h3 class="card-title">Notification preferences</h3>
+        <div class="mt-4 space-y-4">
+          <% [
+            { label: 'Email notifications', checked: true },
+            { label: 'Push notifications', checked: true },
+            { label: 'Price alerts', checked: false },
+            { label: 'Security alerts', checked: true }
+          ].forEach(function (item) { %>
+            <label class="flex items-center justify-between gap-4">
+              <span class="text-sm text-slate-600 dark:text-slate-300"><%= item.label %></span>
+              <span class="relative inline-flex cursor-pointer items-center">
+                <input type="checkbox" class="peer sr-only" <%= item.checked ? 'checked' : '' %>>
+                <span class="h-6 w-11 rounded-full bg-slate-200 transition peer-checked:bg-brand-600 dark:bg-slate-700"></span>
+                <span class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+              </span>
+            </label>
+          <% }); %>
+        </div>
+      </div>
+
+      <div class="card card-body">
+        <h3 class="card-title">Categories</h3>
+        <div class="mt-4 space-y-3 text-sm">
+          <div class="flex items-center gap-2.5"><span class="h-2.5 w-2.5 rounded-full bg-brand-500"></span><span class="muted">Transactions</span></div>
+          <div class="flex items-center gap-2.5"><span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span><span class="muted">Security</span></div>
+          <div class="flex items-center gap-2.5"><span class="h-2.5 w-2.5 rounded-full bg-violet-500"></span><span class="muted">Market updates</span></div>
+          <div class="flex items-center gap-2.5"><span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span><span class="muted">Promotions</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
 
 <%- include('../partials/footer') %>

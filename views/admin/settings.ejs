@@ -1,210 +1,149 @@
 <%- include('../partials/head', {title: title}) %>
 <%- include('../partials/admin-header') %>
 
-<main class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">System Settings</h1>
+<main class="page">
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Settings Forms -->
-        <div class="lg:col-span-2 space-y-6">
-            <!-- General Settings -->
-            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">General Settings</h2>
-                
-                <form action="/admin/settings" method="POST">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Platform Name</label>
-                        <input type="text" value="CryptoInvest" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Platform Email</label>
-                        <input type="email" value="support@cryptoinvest.com" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Customer Support URL</label>
-                        <input type="url" value="https://support.cryptoinvest.com" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Default Currency</label>
-                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                            <option>USD</option>
-                            <option>EUR</option>
-                            <option>GBP</option>
-                            <option>JPY</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="bg-crypto-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                        Save General Settings
-                    </button>
-                </form>
-            </div>
-
-            <!-- Fee Settings -->
-            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Fee Settings</h2>
-                
-                <form action="/admin/settings" method="POST">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deposit Fee (%)</label>
-                            <input type="number" step="0.01" value="0.5" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Withdrawal Fee (%)</label>
-                            <input type="number" step="0.01" value="1.0" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Trade Fee (%)</label>
-                            <input type="number" step="0.01" value="0.25" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Minimum Withdrawal</label>
-                            <input type="number" step="0.00000001" value="0.001" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="bg-crypto-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                        Save Fee Settings
-                    </button>
-                </form>
-            </div>
-
-            <!-- Wallet Management -->
-            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Wallet Management</h2>
-                
-                <form action="/admin/wallet/update" method="POST">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Currency</label>
-                        <select name="currency" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white" required>
-                            <option value="">Select Currency</option>
-                            <option value="BTC">Bitcoin (BTC)</option>
-                            <option value="ETH">Ethereum (ETH)</option>
-                            <option value="USDT">USDT (ERC20)</option>
-                            <option value="USDT_TRC20">USDT (TRC20)</option>
-                            <option value="ADA">Cardano (ADA)</option>
-                            <option value="DOT">Polkadot (DOT)</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deposit Address</label>
-                        <input type="text" name="address" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="Enter new deposit address" required>
-                    </div>
-
-                    <button type="submit" class="bg-crypto-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                        Update Wallet Address
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- System Status -->
-        <div class="space-y-6">
-            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">System Status</h2>
-                
-                <div class="space-y-4">
-                    <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">API Response</span>
-                            <span class="text-sm font-medium text-green-600">98%</span>
-                        </div>
-                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                            <div class="bg-green-600 h-2 rounded-full" style="width: 98%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Server Uptime</span>
-                            <span class="text-sm font-medium text-green-600">99.9%</span>
-                        </div>
-                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                            <div class="bg-green-600 h-2 rounded-full" style="width: 99.9%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Database</span>
-                            <span class="text-sm font-medium text-green-600">Normal</span>
-                        </div>
-                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                            <div class="bg-green-600 h-2 rounded-full" style="width: 100%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Transactions/sec</span>
-                            <span class="text-sm font-medium text-green-600">124</span>
-                        </div>
-                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                            <div class="bg-green-600 h-2 rounded-full" style="width: 75%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Security Settings</h2>
-                
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Force 2FA</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer" checked>
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-crypto-blue"></div>
-                        </label>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Email Verification</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer" checked>
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-crypto-blue"></div>
-                        </label>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">KYC Required</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer" checked>
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-crypto-blue"></div>
-                        </label>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Withdrawal Email Confirm</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer" checked>
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-crypto-blue"></div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Danger Zone</h2>
-                
-                <div class="space-y-4">
-                    <button class="w-full bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors">
-                        Maintenance Mode
-                    </button>
-                    <button class="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
-                        Emergency Shutdown
-                    </button>
-                </div>
-            </div>
-        </div>
+  <div class="page-head">
+    <div>
+      <h2 class="page-title">System settings</h2>
+      <p class="page-sub">Platform configuration, fees and deposit wallets.</p>
     </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+    <!-- Forms -->
+    <div class="space-y-6 lg:col-span-2">
+
+      <div class="card">
+        <div class="card-header"><h3 class="card-title">General</h3></div>
+        <div class="card-body">
+          <form action="/admin/settings" method="POST" class="space-y-5">
+            <div>
+              <label class="label">Platform name</label>
+              <input type="text" value="Advanced Trading" class="input">
+            </div>
+            <div>
+              <label class="label">Support email</label>
+              <input type="email" value="support@advancedtrading.com" class="input">
+            </div>
+            <div>
+              <label class="label">Default currency</label>
+              <select class="input">
+                <option>USD</option><option>EUR</option><option>GBP</option><option>JPY</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Save general settings</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3 class="card-title">Fees</h3></div>
+        <div class="card-body">
+          <form action="/admin/settings" method="POST" class="space-y-5">
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <div>
+                <label class="label">Deposit fee (%)</label>
+                <input type="number" step="0.01" value="0.5" class="input">
+              </div>
+              <div>
+                <label class="label">Withdrawal fee (%)</label>
+                <input type="number" step="0.01" value="1.0" class="input">
+              </div>
+              <div>
+                <label class="label">Trade fee (%)</label>
+                <input type="number" step="0.01" value="0.25" class="input">
+              </div>
+              <div>
+                <label class="label">Minimum withdrawal</label>
+                <input type="number" step="0.00000001" value="0.001" class="input">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save fee settings</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3 class="card-title">Deposit wallet</h3></div>
+        <div class="card-body">
+          <form action="/admin/wallet/update" method="POST" class="space-y-5">
+            <div>
+              <label class="label">Currency</label>
+              <select name="currency" class="input" required>
+                <option value="">Select currency</option>
+                <option value="BTC">Bitcoin (BTC)</option>
+                <option value="ETH">Ethereum (ETH)</option>
+                <option value="USDT">USDT (ERC20)</option>
+                <option value="USDT_TRC20">USDT (TRC20)</option>
+                <option value="ADA">Cardano (ADA)</option>
+                <option value="DOT">Polkadot (DOT)</option>
+              </select>
+            </div>
+            <div>
+              <label class="label">Deposit address</label>
+              <input type="text" name="address" class="input font-mono" placeholder="Enter new deposit address" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update wallet address</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side -->
+    <div class="space-y-6">
+      <div class="card">
+        <div class="card-header"><h3 class="card-title">System status</h3></div>
+        <div class="card-body space-y-5">
+          <% [
+            { label: 'API response', value: '98%', width: '98%' },
+            { label: 'Server uptime', value: '99.9%', width: '99.9%' },
+            { label: 'Database', value: 'Normal', width: '100%' }
+          ].forEach(function (row) { %>
+            <div>
+              <div class="mb-1.5 flex items-center justify-between text-sm">
+                <span class="muted"><%= row.label %></span>
+                <span class="font-medium text-emerald-600 dark:text-emerald-400"><%= row.value %></span>
+              </div>
+              <div class="h-2 w-full rounded-full bg-slate-100 dark:bg-slate-800">
+                <div class="h-2 rounded-full bg-emerald-500" style="width: <%= row.width %>"></div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3 class="card-title">Security</h3></div>
+        <div class="card-body space-y-4">
+          <% [
+            { label: 'Force 2FA', checked: true },
+            { label: 'Email verification', checked: true },
+            { label: 'KYC required', checked: true },
+            { label: 'Withdrawal email confirm', checked: true }
+          ].forEach(function (item) { %>
+            <label class="flex items-center justify-between gap-4">
+              <span class="text-sm text-slate-600 dark:text-slate-300"><%= item.label %></span>
+              <span class="relative inline-flex cursor-pointer items-center">
+                <input type="checkbox" class="peer sr-only" <%= item.checked ? 'checked' : '' %>>
+                <span class="h-6 w-11 rounded-full bg-slate-200 transition peer-checked:bg-brand-600 dark:bg-slate-700"></span>
+                <span class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+              </span>
+            </label>
+          <% }); %>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3 class="card-title text-rose-600 dark:text-rose-400">Danger zone</h3></div>
+        <div class="card-body space-y-3">
+          <button class="btn btn-warning w-full">Enable maintenance mode</button>
+          <button class="btn btn-danger w-full">Emergency shutdown</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
 
 <%- include('../partials/footer') %>

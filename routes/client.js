@@ -7,17 +7,8 @@ const bcrypt = require("bcryptjs");
 const Notification = require("../models/Notification");
 const nodemailer = require("nodemailer");
 const axios = require("axios");
-const cloudinary = require("cloudinary").v2;
 const router = express.Router();
-const multer = require("multer");
-const path = require("path");
 const verifyPin = require("../middleware/verifyPin");
-
-cloudinary.config({
-  cloud_name: process.env.YOUR_CLOUD_NAME,
-  api_key: process.env.YOUR_API_KEY,
-  api_secret: process.env.YOUR_API_SECRET,
-});
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -26,9 +17,6 @@ const transporter = nodemailer.createTransport({
     pass: "viwh iefs gncz ggpl ",
   },
 });
-
-const storage = multer.diskStorage({});
-const upload = multer({ storage });
 
 router.get("/dashboard", ensureAuth, async (req, res) => {
   try {
@@ -348,47 +336,40 @@ router.post("/notifications/:id/read", ensureAuth, async (req, res) => {
   }
 });
 
-// KYC upload
-router.post(
-  "/kyc/upload",
-  ensureAuth,
-  upload.single("document"),
-  async (req, res) => {
-    try {
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: "kyc-documents",
-        resource_type: "auto",
-      });
-
-      req.user.kycStatus = "pending";
-      req.user.kycDocuments.push({
-        documentType: req.body.documentType,
-        documentUrl: result.secure_url,
-        uploadedAt: new Date(),
-      });
-
-      await req.user.save();
-
-      // console.log(req.user);
-
-      const notification = new Notification({
-        user: req.user._id,
-        title: "KYC Documents Submitted",
-        message: "Your KYC documents have been submitted for verification.",
-        type: "info",
-      });
-
-      await notification.save();
-      
-      req.flash("success","Your KYC documents have been submitted for verification.");
-      res.redirect("/client/profile");
-    } catch (err) {
-      console.error("KYC upload error:", err);
-      req.flash("error","An error occured please try again later");
+// KYC submission
+router.post("/kyc/submit", ensureAuth, async (req, res) => {
+  try {
+    if (req.user.kycStatus === "verified") {
+      req.flash("error", "Your account is already verified.");
       return res.redirect("/client/profile");
     }
+
+    req.user.kycStatus = "pending";
+    req.user.kycSubmittedAt = new Date();
+    req.user.kycNotes = "";
+    await req.user.save();
+
+    const notification = new Notification({
+      user: req.user._id,
+      title: "KYC Submitted",
+      message:
+        "Your verification request has been submitted and is pending admin approval.",
+      type: "info",
+    });
+
+    await notification.save();
+
+    req.flash(
+      "success",
+      "Your verification request has been submitted for approval."
+    );
+    res.redirect("/client/profile");
+  } catch (err) {
+    console.error("KYC submit error:", err);
+    req.flash("error", "An error occured please try again later");
+    return res.redirect("/client/profile");
   }
-);
+});
 
 // Toggle 2FA
 router.post("/toggle-2fa", ensureAuth, async (req, res) => {

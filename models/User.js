@@ -14,11 +14,9 @@ const userSchema = new mongoose.Schema({
     enum: ['not_started', 'pending', 'verified', 'rejected'], 
     default: 'not_started' 
   },
-  kycDocuments: [{
-    documentType: String,
-    documentUrl: String,
-    uploadedAt: Date
-  }],
+  kycSubmittedAt: Date,
+  kycReviewedAt: Date,
+  kycNotes: String,
   twoFactorEnabled: { type: Boolean, default: false },
   twoFactorSecret: String,
   referralCode: { type: String, unique: true },

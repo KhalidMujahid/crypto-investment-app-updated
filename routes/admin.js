@@ -138,7 +138,7 @@ router.post("/users/:id/wallets/create", ensureAuth, ensureAdmin, async (req, re
 });
 
 // List all users with pending KYC
-router.get("/users/kyc/pending", async (req, res) => {
+router.get("/users/kyc/pending", ensureAuth, ensureAdmin, async (req, res) => {
   try {
     const users = await User.find({ kycStatus: "pending" }).lean();
 
@@ -150,7 +150,7 @@ router.get("/users/kyc/pending", async (req, res) => {
 });
 
 // GET route - show KYC verification page for a user
-router.get("/users/:id/kyc", async (req, res) => {
+router.get("/users/:id/kyc", ensureAuth, ensureAdmin, async (req, res) => {
   try {
     const user = await User.findById(req.params.id).lean();
 
@@ -166,7 +166,7 @@ router.get("/users/:id/kyc", async (req, res) => {
 });
 
 // POST route - update KYC status
-router.post("/users/:id/kyc/update", async (req, res) => {
+router.post("/users/:id/kyc/update", ensureAuth, ensureAdmin, async (req, res) => {
   try {
     const { action, notes } = req.body;
     const { id } = req.params;

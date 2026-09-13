@@ -1,51 +1,46 @@
-<%- include('../partials/head', { title: "Pending KYC Requests" }) %>
+<%- include('../partials/head', {title: 'Pending KYC'}) %>
 <%- include('../partials/admin-header') %>
 
-<main class="container mx-auto px-4 py-8">
-  <!-- Page Header -->
-  <div class="flex items-center justify-between mb-6">
-    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Pending KYC Requests</h2>
-    <a href="/admin/users" class="text-sm text-indigo-600 hover:underline">&larr; Back to Users</a>
+<main class="page">
+
+  <div class="page-head">
+    <div>
+      <h2 class="page-title">KYC review queue</h2>
+      <p class="page-sub">Verification requests awaiting approval.</p>
+    </div>
+    <span class="badge <%= users.length > 0 ? 'badge-warning' : 'badge-success' %>"><%= users.length %> pending</span>
   </div>
 
-  <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-    <% if (users && users.length > 0) { %>
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-800">
+  <div class="card">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Submitted</th><th class="text-right">Action</th></tr>
+        </thead>
+        <tbody>
+          <% if (!users || users.length === 0) { %>
+            <tr><td colspan="4" class="text-center muted">No pending requests at the moment.</td></tr>
+          <% } %>
+          <% (users || []).forEach(function (u) { %>
             <tr>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+              <td>
+                <div class="flex items-center gap-3">
+                  <span class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
+                    <%= (u.firstName ? u.firstName[0] : '') %><%= (u.lastName ? u.lastName[0] : '') %>
+                  </span>
+                  <span class="font-medium text-slate-900 dark:text-white"><%= u.firstName %> <%= u.lastName %></span>
+                </div>
+              </td>
+              <td class="muted"><%= u.email %></td>
+              <td class="muted"><%= u.kycSubmittedAt ? new Date(u.kycSubmittedAt).toLocaleDateString() : '—' %></td>
+              <td class="text-right">
+                <a href="/admin/users/<%= u._id %>/kyc" class="btn btn-primary btn-sm">Review</a>
+              </td>
             </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-            <% users.forEach(user => { %>
-              <tr>
-                <td class="px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white">
-                  <%= user?.firstName %> <%= user?.lastName %>
-                </td>
-                <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300"><%= user?.email %></td>
-                <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
-                  <%= user?.kycDocuments && user?.kycDocuments.length > 0 
-                        ? new Date(user?.kycDocuments[0].uploadedAt).toLocaleDateString() 
-                        : 'N/A' %>
-                </td>
-                <td class="px-4 py-3">
-                  <a href="/admin/users/<%= user._id %>/kyc"
-                     class="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                    Review
-                  </a>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </div>
-    <% } else { %>
-      <p class="text-gray-500">No pending KYC requests at the moment.</p>
-    <% } %>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
   </div>
 </main>
 

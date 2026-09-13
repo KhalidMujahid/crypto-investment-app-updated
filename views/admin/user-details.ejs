@@ -1,141 +1,135 @@
-<%- include('../partials/head', {title: "User Details"}) %>
+<%- include('../partials/head', {title: 'User details'}) %>
 <%- include('../partials/admin-header') %>
 
-<main class="container mx-auto px-4 py-8">
-  <!-- User Profile -->
-  <div class="glassmorphism rounded-2xl p-6 shadow-lg mb-8">
-    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">User Profile</h2>
+<main class="page">
 
-    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+  <div class="page-head">
+    <div class="flex items-center gap-4">
+      <span class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-600 text-base font-bold text-white">
+        <%= (user.firstName ? user.firstName[0] : '') %><%= (user.lastName ? user.lastName[0] : '') %>
+      </span>
       <div>
-        <dt class="text-sm font-medium text-gray-500">Name</dt>
-        <dd class="text-lg font-semibold text-gray-900 dark:text-white">
-          <%= user.firstName %> <%= user.lastName %>
-        </dd>
+        <h2 class="page-title"><%= user.firstName %> <%= user.lastName %></h2>
+        <p class="page-sub"><%= user.email %></p>
+      </div>
+    </div>
+    <a href="/admin/users" class="btn btn-secondary btn-sm">&larr; All users</a>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+    <!-- Profile -->
+    <div class="card lg:col-span-2">
+      <div class="card-header"><h3 class="card-title">Profile</h3></div>
+      <div class="card-body grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wide muted">Email</dt>
+          <dd class="mt-1 text-sm text-slate-800 dark:text-slate-200"><%= user.email %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wide muted">Role</dt>
+          <dd class="mt-1"><span class="badge <%= user.role === 'admin' ? 'badge-brand' : 'badge-neutral' %>"><%= user.role %></span></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wide muted">KYC status</dt>
+          <dd class="mt-1">
+            <span class="badge <%= user.kycStatus === 'verified' ? 'badge-success' : user.kycStatus === 'pending' ? 'badge-warning' : user.kycStatus === 'rejected' ? 'badge-danger' : 'badge-neutral' %>"><%= user.kycStatus.replace('_', ' ') %></span>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wide muted">Account status</dt>
+          <dd class="mt-1"><span class="badge <%= user.status === 'active' ? 'badge-success' : user.status === 'suspended' ? 'badge-warning' : 'badge-danger' %>"><%= user.status %></span></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wide muted">Referral code</dt>
+          <dd class="mt-1 font-mono text-sm text-slate-800 dark:text-slate-200"><%= user.referralCode || '—' %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wide muted">Joined</dt>
+          <dd class="mt-1 text-sm text-slate-800 dark:text-slate-200"><%= user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '—' %></dd>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin actions -->
+    <div class="space-y-6">
+      <div class="card card-body">
+        <h3 class="card-title">KYC review</h3>
+        <p class="mt-2 text-sm muted">Review and approve this user's verification request.</p>
+        <a href="/admin/users/<%= user._id %>/kyc" class="btn btn-primary mt-4 w-full">Open KYC review</a>
       </div>
 
-      <div>
-        <dt class="text-sm font-medium text-gray-500">Email</dt>
-        <dd class="text-lg text-gray-700 dark:text-gray-300"><%= user.email %></dd>
+      <div class="card card-body">
+        <h3 class="card-title">Account status</h3>
+        <form action="/admin/users/<%= user._id %>/status" method="POST" class="mt-4 space-y-3">
+          <select name="status" class="input">
+            <% ['active', 'suspended', 'banned'].forEach(function (s) { %>
+              <option value="<%= s %>" <%= user.status === s ? 'selected' : '' %>><%= s.charAt(0).toUpperCase() + s.slice(1) %></option>
+            <% }); %>
+          </select>
+          <button type="submit" class="btn btn-secondary w-full">Update status</button>
+        </form>
       </div>
-
-      <div>
-        <dt class="text-sm font-medium text-gray-500">Role</dt>
-        <dd>
-          <span class="px-2 py-1 text-xs font-semibold rounded-full 
-            <%= user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800' %>">
-            <%= user.role %>
-          </span>
-        </dd>
-      </div>
-
-      <div>
-        <dt class="text-sm font-medium text-gray-500">KYC Status</dt>
-        <dd>
-          <span class="px-2 py-1 text-xs font-semibold rounded-full 
-            <%= user.kycStatus === 'verified' ? 'bg-green-100 text-green-800' : 
-               user.kycStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-               user.kycStatus === 'rejected' ? 'bg-red-100 text-red-800' : 
-               'bg-gray-100 text-gray-800' %>">
-            <%= user.kycStatus %>
-          </span>
-        </dd>
-      </div>
-
-      <div>
-        <dt class="text-sm font-medium text-gray-500">Account Status</dt>
-        <dd>
-          <span class="px-2 py-1 text-xs font-semibold rounded-full 
-            <%= user.status === 'active' ? 'bg-green-100 text-green-800' : 
-               user.status === 'suspended' ? 'bg-yellow-100 text-yellow-800' : 
-               'bg-red-100 text-red-800' %>">
-            <%= user.status %>
-          </span>
-        </dd>
-      </div>
-    </dl>
+    </div>
   </div>
 
   <!-- Wallets -->
-  <div class="glassmorphism rounded-2xl p-6 shadow-lg mb-8">
-    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Wallets</h2>
-
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+  <div class="card mt-6">
+    <div class="card-header">
+      <h3 class="card-title">Wallets</h3>
+      <span class="badge badge-neutral"><%= wallets.length %> wallet<%= wallets.length === 1 ? '' : 's' %></span>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
         <thead>
-          <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Currency</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Address</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Balance</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Locked</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-          </tr>
+          <tr><th>Currency</th><th>Address</th><th>Balance</th><th>Locked</th><th class="text-right">Update</th></tr>
         </thead>
-        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-          <% wallets.forEach(wallet => { %>
-          <tr>
-            <td class="px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white"><%= wallet.currency %></td>
-            <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300"><%= wallet.address %></td>
-            <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300"><%= wallet.balance %></td>
-            <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300"><%= wallet.lockedBalance %></td>
-            <td class="px-4 py-3 text-right">
-              <a href="#edit-wallet-<%= wallet._id %>" class="text-indigo-600 hover:text-indigo-800">Edit</a>
-            </td>
-          </tr>
-
-          <!-- Edit Wallet Form -->
-          <tr id="edit-wallet-<%= wallet._id %>" class="bg-gray-50 dark:bg-gray-800">
-            <td colspan="5" class="px-4 py-4">
-              <form action="/admin/users/<%= user._id %>/wallets/<%= wallet._id %>/update" method="POST" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Balance</label>
-                  <input type="number" name="balance" value="<%= wallet.balance %>" step="0.01"
-                    class="mt-1 w-full px-3 py-2 border rounded-md text-sm" />
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Locked Balance</label>
-                  <input type="number" name="lockedBalance" value="<%= wallet.lockedBalance %>" step="0.01"
-                    class="mt-1 w-full px-3 py-2 border rounded-md text-sm" />
-                </div>
-
-                <div class="flex items-end">
-                  <button type="submit"
-                    class="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                    Save
-                  </button>
-                </div>
-              </form>
-            </td>
-          </tr>
-          <% }) %>
+        <tbody>
+          <% if (wallets.length === 0) { %>
+            <tr><td colspan="5" class="text-center muted">No wallets yet.</td></tr>
+          <% } %>
+          <% wallets.forEach(function (wallet) { %>
+            <tr>
+              <td class="font-medium text-slate-900 dark:text-white"><%= wallet.currency %></td>
+              <td class="font-mono text-xs muted"><%= wallet.address %></td>
+              <td><%= wallet.balance %></td>
+              <td><%= wallet.lockedBalance %></td>
+              <td>
+                <form action="/admin/users/<%= user._id %>/wallets/<%= wallet._id %>/update" method="POST" class="flex items-center justify-end gap-2">
+                  <input type="number" name="balance" value="<%= wallet.balance %>" step="0.01" class="input w-28 py-1.5 text-xs">
+                  <input type="number" name="lockedBalance" value="<%= wallet.lockedBalance %>" step="0.01" class="input w-28 py-1.5 text-xs">
+                  <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- Add New Wallet -->
-  <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Add New Wallet</h2>
-    <form action="/admin/users/<%= user._id %>/wallets/create" method="POST" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Currency</label>
-        <input type="text" name="currency" required class="mt-1 w-full px-3 py-2 border rounded-md text-sm" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
-        <input type="text" name="address" required class="mt-1 w-full px-3 py-2 border rounded-md text-sm" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Balance</label>
-        <input type="number" name="balance" step="0.01" class="mt-1 w-full px-3 py-2 border rounded-md text-sm" />
-      </div>
-      <div class="sm:col-span-3 flex justify-end">
-        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-          Create Wallet
-        </button>
-      </div>
-    </form>
+  <!-- Add wallet -->
+  <div class="card mt-6">
+    <div class="card-header"><h3 class="card-title">Add new wallet</h3></div>
+    <div class="card-body">
+      <form action="/admin/users/<%= user._id %>/wallets/create" method="POST" class="grid grid-cols-1 gap-4 sm:grid-cols-4">
+        <div>
+          <label class="label">Currency</label>
+          <input type="text" name="currency" required class="input" placeholder="BTC">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="label">Address</label>
+          <input type="text" name="address" required class="input font-mono" placeholder="Wallet address">
+        </div>
+        <div>
+          <label class="label">Opening balance</label>
+          <input type="number" name="balance" step="0.01" class="input" placeholder="0.00">
+        </div>
+        <div class="sm:col-span-4 flex justify-end">
+          <button type="submit" class="btn btn-primary">Create wallet</button>
+        </div>
+      </form>
+    </div>
   </div>
 </main>
 

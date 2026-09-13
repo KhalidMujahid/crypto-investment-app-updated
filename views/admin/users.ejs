@@ -1,71 +1,57 @@
-<%- include('../partials/head', {title: "Users Management"}) %>
+<%- include('../partials/head', {title: title || 'Users'}) %>
 <%- include('../partials/admin-header') %>
 
-<main class="container mx-auto px-4 py-8">
-  <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Users Management</h1>
+<main class="page">
 
-  <div class="glassmorphism rounded-2xl p-6 shadow-lg mb-8">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">All Users</h2>
+  <div class="page-head">
+    <div>
+      <h2 class="page-title">Users</h2>
+      <p class="page-sub">All registered accounts across the platform.</p>
     </div>
-    
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+    <span class="badge badge-neutral"><%= users.length %> total</span>
+  </div>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table class="table">
         <thead>
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Name</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Email</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Role</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">KYC Status</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Actions</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>KYC</th>
+            <th>Status</th>
+            <th class="text-right">Actions</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-          <% users.forEach(user => { %>
-          <tr>
-            <!-- Name -->
-            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-              <%= user.firstName %> <%= user.lastName %>
-            </td>
-
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-              <%= user.email %>
-            </td>
-
-            <td class="px-4 py-3 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                <%= user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800' %>">
-                <%= user.role %>
-              </span>
-            </td>
-
-            <td class="px-4 py-3 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                <%= user.kycStatus === 'verified' ? 'bg-green-100 text-green-800' : 
-                   user.kycStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                   user.kycStatus === 'rejected' ? 'bg-red-100 text-red-800' : 
-                   'bg-gray-100 text-gray-800' %>">
-                <%= user.kycStatus %>
-              </span>
-            </td>
-
-            <td class="px-4 py-3 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                <%= user.status === 'active' ? 'bg-green-100 text-green-800' : 
-                   user.status === 'suspended' ? 'bg-yellow-100 text-yellow-800' : 
-                   'bg-red-100 text-red-800' %>">
-                <%= user.status %>
-              </span>
-            </td>
-
-            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
-              <a href="/admin/users/<%= user._id %>" 
-                 class="text-crypto-blue hover:text-blue-600 font-semibold">
-                View Details
-              </a>
-            </td>
-          </tr>
+        <tbody>
+          <% if (!users || users.length === 0) { %>
+            <tr><td colspan="6" class="text-center muted">No users found.</td></tr>
+          <% } %>
+          <% (users || []).forEach(function (u) { %>
+            <tr>
+              <td>
+                <div class="flex items-center gap-3">
+                  <span class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
+                    <%= (u.firstName ? u.firstName[0] : '') %><%= (u.lastName ? u.lastName[0] : '') %>
+                  </span>
+                  <span class="font-medium text-slate-900 dark:text-white"><%= u.firstName %> <%= u.lastName %></span>
+                </div>
+              </td>
+              <td class="muted"><%= u.email %></td>
+              <td><span class="badge <%= u.role === 'admin' ? 'badge-brand' : 'badge-neutral' %>"><%= u.role %></span></td>
+              <td>
+                <span class="badge <%= u.kycStatus === 'verified' ? 'badge-success' : u.kycStatus === 'pending' ? 'badge-warning' : u.kycStatus === 'rejected' ? 'badge-danger' : 'badge-neutral' %>">
+                  <%= u.kycStatus.replace('_', ' ') %>
+                </span>
+              </td>
+              <td>
+                <span class="badge <%= u.status === 'active' ? 'badge-success' : u.status === 'suspended' ? 'badge-warning' : 'badge-danger' %>"><%= u.status %></span>
+              </td>
+              <td class="text-right">
+                <a href="/admin/users/<%= u._id %>" class="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400">View details</a>
+              </td>
+            </tr>
           <% }); %>
         </tbody>
       </table>

@@ -1,74 +1,126 @@
+<%
+  const pageTitle = (typeof title !== 'undefined' && title) ? title : 'Advanced Trading';
+  const pageBodyClass = (typeof bodyClass !== 'undefined' && bodyClass) ? bodyClass : '';
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %> | Advanced Trading</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            200: '#bae6fd',
-                            300: '#7dd3fc',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
-                        },
-                        crypto: {
-                            blue: '#3b82f6',
-                            purple: '#8b5cf6',
-                            pink: '#ec4899',
-                            green: '#10b981',
-                            red: '#ef4444',
-                            yellow: '#f59e0b'
-                        }
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .glassmorphism {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .dark .glassmorphism {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .neon-border {
-            box-shadow: 0 0 5px theme('colors.crypto.blue'),
-                        0 0 10px theme('colors.crypto.blue'),
-                        0 0 15px theme('colors.crypto.blue');
-        }
-        .grid-dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#4f46e5" />
+  <title><%= pageTitle %> · Advanced Trading</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('theme');
+        var dark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (dark) document.documentElement.classList.add('dark');
+      } catch (e) {}
+    })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
+              400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
+              800: '#3730a3', 900: '#312e81', 950: '#1e1b4b',
+            },
+            crypto: {
+              blue: '#4f46e5', green: '#059669', purple: '#7c3aed',
+              pink: '#db2777', red: '#e11d48', yellow: '#d97706',
+            },
+          },
+          boxShadow: {
+            card: '0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06)',
+            soft: '0 12px 32px -16px rgb(15 23 42 / 0.18)',
+          },
+        },
+      },
+    };
+  </script>
+  <style type="text/tailwindcss">
+    @layer base {
+      html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+      body { @apply bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-200; }
+      ::selection { @apply bg-brand-600/20; }
+      [x-cloak] { display: none !important; }
+    }
+
+    @layer components {
+      .card { @apply rounded-2xl border border-slate-200 bg-white shadow-card dark:border-slate-800 dark:bg-slate-900; }
+      .card-header { @apply flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4 dark:border-slate-800; }
+      .card-title { @apply text-base font-semibold text-slate-900 dark:text-white; }
+      .card-body { @apply p-5 sm:p-6; }
+
+      .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:pointer-events-none disabled:opacity-60 dark:focus-visible:ring-offset-slate-900; }
+      .btn-primary { @apply bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800; }
+      .btn-secondary { @apply border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800; }
+      .btn-ghost { @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white; }
+      .btn-danger { @apply bg-rose-600 text-white hover:bg-rose-700; }
+      .btn-success { @apply bg-emerald-600 text-white hover:bg-emerald-700; }
+      .btn-warning { @apply bg-amber-500 text-white hover:bg-amber-600; }
+      .btn-sm { @apply px-3 py-1.5 text-xs; }
+
+      .input { @apply block w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 shadow-sm transition focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/25 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder-slate-500; }
+      .label { @apply mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300; }
+      .hint { @apply mt-1.5 text-xs text-slate-500 dark:text-slate-400; }
+
+      .badge { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize; }
+      .badge-success { @apply bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400; }
+      .badge-warning { @apply bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400; }
+      .badge-danger { @apply bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400; }
+      .badge-info { @apply bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-400; }
+      .badge-brand { @apply bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-300; }
+      .badge-neutral { @apply bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300; }
+
+      .nav-link { @apply flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-white; }
+      .nav-link.is-active { @apply bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-300; }
+      .nav-link svg { @apply h-5 w-5 shrink-0; }
+
+      .tabbar { @apply fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur-lg dark:border-slate-800 dark:bg-slate-900/95 lg:hidden; }
+      .tabbar-inner { @apply mx-auto flex max-w-lg items-stretch justify-between gap-1 px-2 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]; }
+      .tab { @apply relative flex flex-1 flex-col items-center gap-1 rounded-lg px-1 py-1.5 text-[11px] font-medium text-slate-500 transition-colors dark:text-slate-400; }
+      .tab svg { @apply h-6 w-6; }
+      .tab.is-active { @apply text-brand-600 dark:text-brand-400; }
+      .tab.is-active::after { content: ''; position: absolute; top: -0.4375rem; height: 2px; width: 1.75rem; border-radius: 9999px; background: currentColor; }
+
+      .table-wrap { @apply overflow-x-auto; }
+      .table { @apply min-w-full text-sm; }
+      .table thead th { @apply whitespace-nowrap border-b border-slate-200 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:border-slate-800 dark:text-slate-400; }
+      .table tbody td { @apply border-b border-slate-100 px-4 py-3.5 align-middle text-slate-700 dark:border-slate-800/70 dark:text-slate-300; }
+      .table tbody tr:last-child td { @apply border-b-0; }
+      .table tbody tr { @apply transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40; }
+
+      .page { @apply mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8; }
+      .page-head { @apply mb-6 flex flex-wrap items-end justify-between gap-4; }
+      .page-title { @apply text-xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-2xl; }
+      .page-sub { @apply mt-1 text-sm text-slate-500 dark:text-slate-400; }
+      .muted { @apply text-slate-500 dark:text-slate-400; }
+      .empty { @apply flex flex-col items-center justify-center gap-2 px-6 py-14 text-center; }
+    }
+  </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+<body class="min-h-screen font-sans antialiased <%= pageBodyClass %>">
+<script>
+  function toggleTheme() {
+    var isDark = document.documentElement.classList.toggle('dark');
+    try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+  }
+</script>

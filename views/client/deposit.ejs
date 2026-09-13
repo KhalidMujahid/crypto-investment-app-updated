@@ -1,144 +1,101 @@
 <%- include('../partials/head', {title: title}) %>
 <%- include('../partials/client-header') %>
 
-<main class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Deposit Funds</h1>
+<main class="page">
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Deposit Methods -->
-        <div class="lg:col-span-2 space-y-6">
-            <!-- Crypto Deposit -->
-            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Deposit Cryptocurrency</h2>
-                
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Currency</label>
-                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                        <option>Bitcoin (BTC)</option>
-                        <option>Ethereum (ETH)</option>
-                        <option>USDT (ERC20)</option>
-                        <option>USDT (TRC20)</option>
-                        <option>Cardano (ADA)</option>
-                        <option>Polkadot (DOT)</option>
-                    </select>
-                </div>
-
-                <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-4">
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Send only <span class="font-medium">BTC</span> to this address</p>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Sending any other currency may result in permanent loss</p>
-                </div>
-
-                <div class="text-center mb-4">
-                    <div id="qrcode" class="inline-block p-4 bg-white rounded-lg"></div>
-                </div>
-
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deposit Address</label>
-                    <div class="flex items-center">
-                        <input type="text" readonly value="<%= depositAddress || '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa' %>" 
-                               class="flex-grow px-3 py-2 border border-gray-300 rounded-l-md shadow-sm focus:outline-none focus:ring-crypto-blue focus:border-crypto-blue dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                        <button class="bg-crypto-blue text-white px-4 py-2 rounded-r-md hover:bg-blue-600 transition-colors" onclick="copyAddress()">
-                            Copy
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-400 dark:border-yellow-600 p-4 rounded-lg">
-                    <p class="text-sm text-yellow-800 dark:text-yellow-200">
-                        <span class="font-medium">Important:</span> This address is for BTC deposits only. Minimum deposit: 0.001 BTC. Network confirmations required: 3.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Fiat Deposit -->
-            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Deposit with Fiat</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg text-center">
-                        <div class="w-12 h-12 bg-crypto-blue rounded-full flex items-center justify-center mx-auto mb-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                            </svg>
-                        </div>
-                        <h3 class="font-medium text-gray-900 dark:text-white">Bank Transfer</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">1-3 business days</p>
-                    </div>
-
-                    <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg text-center">
-                        <div class="w-12 h-12 bg-crypto-blue rounded-full flex items-center justify-center mx-auto mb-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                            </svg>
-                        </div>
-                        <h3 class="font-medium text-gray-900 dark:text-white">Credit Card</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Instant processing</p>
-                    </div>
-                </div>
-
-                <button class="w-full bg-crypto-blue text-white py-3 rounded-lg hover:bg-blue-600 transition-colors">
-                    Process Fiat Deposit
-                </button>
-            </div>
-        </div>
-
-        <!-- Recent Deposits -->
-        <div class="space-y-6">
-            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Recent Deposits</h2>
-                
-                <div class="space-y-4">
-                    <% for(let i = 0; i < 3; i++) { %>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">BTC Deposit</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">2 hours ago</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">0.05 BTC</p>
-                            <p class="text-xs text-green-600">Completed</p>
-                        </div>
-                    </div>
-                    <% } %>
-                </div>
-
-                <a href="/client/transactions" class="block mt-4 text-center text-crypto-blue hover:text-blue-600">
-                    View all transactions
-                </a>
-            </div>
-
-            <!-- Deposit Instructions -->
-            <div class="glassmorphism rounded-2xl p-6 shadow-lg">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Deposit Instructions</h2>
-                
-                <ol class="list-decimal list-inside space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                    <li>Select the cryptocurrency you want to deposit</li>
-                    <li>Copy the deposit address or scan the QR code</li>
-                    <li>Send your cryptocurrency to the provided address</li>
-                    <li>Wait for network confirmations (typically 10-30 minutes)</li>
-                    <li>Your funds will be credited to your account automatically</li>
-                </ol>
-            </div>
-        </div>
+  <div class="page-head">
+    <div>
+      <h2 class="page-title">Deposit funds</h2>
+      <p class="page-sub">Send crypto to your deposit address below.</p>
     </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+    <div class="card lg:col-span-2">
+      <div class="card-header"><h3 class="card-title">Deposit cryptocurrency</h3></div>
+      <div class="card-body">
+        <div class="max-w-md">
+          <label class="label">Asset</label>
+          <select class="input">
+            <option>Bitcoin (BTC)</option>
+            <option>Ethereum (ETH)</option>
+            <option>USDT (ERC20)</option>
+            <option>USDT (TRC20)</option>
+            <option>Cardano (ADA)</option>
+            <option>Polkadot (DOT)</option>
+          </select>
+        </div>
+
+        <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
+          Send only the selected asset to this address. Sending anything else may result in permanent loss.
+        </div>
+
+        <div class="mt-6 flex flex-col items-center gap-5 sm:flex-row sm:items-start">
+          <div id="qrcode" class="inline-flex rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700"></div>
+
+          <div class="w-full flex-1">
+            <label class="label">Deposit address</label>
+            <div class="flex">
+              <input type="text" id="depositAddress" readonly value="<%= depositAddress || '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa' %>"
+                     class="input rounded-r-none font-mono text-xs">
+              <button type="button" onclick="copyAddress()" class="btn btn-primary rounded-l-none">Copy</button>
+            </div>
+            <p class="hint">Network confirmations required: 3.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="card card-body">
+        <h3 class="card-title">How it works</h3>
+        <ol class="mt-4 space-y-3 text-sm text-slate-600 dark:text-slate-300">
+          <li class="flex gap-3"><span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700 dark:bg-brand-500/10 dark:text-brand-300">1</span>Copy the address or scan the QR code.</li>
+          <li class="flex gap-3"><span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700 dark:bg-brand-500/10 dark:text-brand-300">2</span>Send funds from your external wallet.</li>
+          <li class="flex gap-3"><span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700 dark:bg-brand-500/10 dark:text-brand-300">3</span>Wait for network confirmations.</li>
+          <li class="flex gap-3"><span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700 dark:bg-brand-500/10 dark:text-brand-300">4</span>Funds are credited automatically.</li>
+        </ol>
+      </div>
+
+      <div class="card card-body">
+        <h3 class="card-title">Recent deposits</h3>
+        <div class="mt-4 space-y-4">
+          <% for (let i = 0; i < 3; i++) { %>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-slate-900 dark:text-white">BTC deposit</p>
+                <p class="text-xs muted">2 hours ago</p>
+              </div>
+              <p class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">Completed</p>
+            </div>
+          <% } %>
+        </div>
+        <a href="/client/transactions" class="mt-4 inline-block text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400">View all transactions</a>
+      </div>
+    </div>
+  </div>
 </main>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const depositAddress = '<%= depositAddress  %>';
-        new QRCode(document.getElementById('qrcode'), {
-            text: depositAddress,
-            width: 150,
-            height: 150
-        });
-    });
-
-    function copyAddress() {
-        const address = '<%= depositAddress  %>';
-        navigator.clipboard.writeText(address).then(() => {
-            alert('Address copied to clipboard!');
-        });
+  document.addEventListener('DOMContentLoaded', function () {
+    var address = document.getElementById('depositAddress').value;
+    if (window.QRCode && address) {
+      new QRCode(document.getElementById('qrcode'), { text: address, width: 148, height: 148 });
     }
+  });
+
+  function copyAddress() {
+    var address = document.getElementById('depositAddress').value;
+    navigator.clipboard.writeText(address).then(function () {
+      var btn = event && event.target ? event.target : null;
+      if (btn) {
+        var original = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = original; }, 1500);
+      }
+    });
+  }
 </script>
 
 <%- include('../partials/footer') %>

@@ -1,146 +1,122 @@
-<%- include('../partials/head', {title: title}) %>
+<%- include('../partials/head', { title: title, bodyClass: 'bg-slate-100 dark:bg-slate-950' }) %>
 
-<body class="min-h-screen flex items-center justify-center 
-             bg-gradient-to-br from-gray-50 via-white to-gray-100 
-             dark:from-gray-900 dark:via-gray-950 dark:to-black">
+<main class="flex min-h-screen">
 
-  <main class="flex items-center justify-center w-full h-screen px-4">
-    <div class="relative backdrop-blur-xl bg-white/40 dark:bg-gray-800/40 
-                shadow-2xl rounded-2xl p-8 border border-gray-200/30 
-                dark:border-gray-700/30 animate-fade-in w-full max-w-md
-                transition-transform duration-300 hover:scale-[1.02]">
+  <!-- Brand panel -->
+  <section class="relative hidden w-1/2 overflow-hidden bg-slate-900 lg:flex lg:flex-col lg:justify-between">
+    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_70%_20%,rgba(79,70,229,0.45),transparent)]"></div>
+    <div class="pointer-events-none absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-brand-600/30 blur-3xl"></div>
 
-      <div class="text-center">
-        <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white">
-          Welcome back 👋
-        </h2>
-        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          Don't have an account? 
-          <a href="/register" class="font-semibold text-crypto-blue hover:underline hover:text-blue-500 transition">
-            Sign up
-          </a>
-        </p>
+    <div class="relative z-10 flex items-center gap-3 px-10 pt-10">
+      <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-sm font-bold text-white ring-1 ring-white/20">AT</span>
+      <span class="text-sm font-semibold text-white">Advanced Trading</span>
+    </div>
+
+    <div class="relative z-10 px-10 pb-6">
+      <h1 class="max-w-md text-3xl font-bold leading-tight text-white">Invest with clarity and confidence.</h1>
+      <p class="mt-4 max-w-md text-sm leading-relaxed text-slate-300">
+        A calm, secure workspace to track your portfolio, manage transactions and move funds — built for how real people actually use crypto.
+      </p>
+
+      <dl class="mt-10 grid max-w-md grid-cols-3 gap-6 border-t border-white/10 pt-6">
+        <div>
+          <dt class="text-xs text-slate-400">Uptime</dt>
+          <dd class="mt-1 text-lg font-semibold text-white">99.9%</dd>
+        </div>
+        <div>
+          <dt class="text-xs text-slate-400">Assets</dt>
+          <dd class="mt-1 text-lg font-semibold text-white">20+</dd>
+        </div>
+        <div>
+          <dt class="text-xs text-slate-400">Support</dt>
+          <dd class="mt-1 text-lg font-semibold text-white">24/7</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- Form panel -->
+  <section class="flex w-full items-center justify-center px-6 py-12 lg:w-1/2">
+    <div class="w-full max-w-sm">
+
+      <div class="mb-8 lg:hidden">
+        <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-600 text-sm font-bold text-white">AT</span>
       </div>
 
-     <% if (success && success.length > 0) { %>
-    <div class="mb-6 rounded-lg bg-green-100 dark:bg-green-900/30 border border-green-400 dark:border-green-700 px-4 py-3 text-green-800 dark:text-green-200">
-      <%= success %>
-    </div>
-  <% } %>
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Welcome back</h2>
+      <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+        New here?
+        <a href="/register" class="font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400">Create an account</a>
+      </p>
 
-  <% if (error && error.length > 0) { %>
-    <div class="mb-6 rounded-lg bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-700 px-4 py-3 text-red-800 dark:text-red-200">
-      <%= error %>
-    </div>
-  <% } %>
+      <% if (success && success.length > 0) { %>
+        <div class="mt-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300"><%= success %></div>
+      <% } %>
+      <% if (error && error.length > 0) { %>
+        <div class="mt-6 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300"><%= error %></div>
+      <% } %>
 
-      <!-- Form -->
-      <form class="mt-8 space-y-6" action="/login" method="POST" onsubmit="showLoader(event)">
-        <div class="space-y-5">
-          <!-- Email -->
-          <div class="relative group">
-            <input id="email" name="email" type="email" autocomplete="email" required
-                   class="peer p-4 pl-10 block w-full rounded-lg border-gray-300 
-                          dark:border-gray-600 dark:bg-gray-900/60 dark:text-white 
-                          placeholder-transparent focus:ring-2 focus:ring-crypto-blue 
-                          focus:border-crypto-blue sm:text-sm transition"
-                   placeholder="Email address"
-                   value="<%= typeof email !== 'undefined' ? email : '' %>">
-            <label for="email" 
-                   class="absolute left-10 top-2 text-gray-400 text-sm 
-                          peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm 
-                          peer-focus:-top-2 peer-focus:text-xs peer-focus:text-crypto-blue transition-all">
-              Email address
-            </label>
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-              <!-- email icon -->
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M2.94 6.34a2 2 0 011.44-.59h11.24a2 2 
-                         0 011.44.59l-7.06 5.71-7.06-5.71z"/>
-                <path d="M18 8.67v6.66A2 2 0 0116 17H4a2 2 
-                         0 01-2-2V8.67l7.06 5.71a2 2 0 002.88 
-                         0L18 8.67z"/>
-              </svg>
-            </span>
+      <form class="mt-8 space-y-5" action="/login" method="POST" onsubmit="submitLogin()">
+        <div>
+          <label for="email" class="label">Email address</label>
+          <input id="email" name="email" type="email" autocomplete="email" required
+                 class="input" placeholder="you@example.com"
+                 value="<%= typeof email !== 'undefined' ? email : '' %>" />
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between">
+            <label for="password" class="label mb-0">Password</label>
+            <a href="#" class="text-xs font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400">Forgot password?</a>
           </div>
-
-          <div class="relative group">
+          <div class="relative mt-1.5">
             <input id="password" name="password" type="password" autocomplete="current-password" required
-                   class="peer p-4 pl-10 pr-10 block w-full rounded-lg border-gray-300 
-                          dark:border-gray-600 dark:bg-gray-900/60 dark:text-white 
-                          placeholder-transparent focus:ring-2 focus:ring-crypto-blue focus:border-crypto-blue sm:text-sm transition"
-                   placeholder="Password">
-            <label for="password" 
-                   class="absolute left-10 top-2 text-gray-400 text-sm 
-                          peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm 
-                          peer-focus:-top-2 peer-focus:text-xs peer-focus:text-crypto-blue transition-all">
-              Password
-            </label>
-            <button type="button" onclick="togglePassword()" 
-                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition">
-              <svg id="password-toggle-icon" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                <path d="M2.458 12C3.732 7.943 7.522 5 
-                         12 5c4.478 0 8.268 2.943 
-                         9.542 7-1.274 4.057-5.064 7-9.542 
-                         7-4.478 0-8.268-2.943-9.542-7z"/>
+                   class="input pr-11" placeholder="••••••••" />
+            <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+              <span class="sr-only">Show password</span>
+              <svg id="password-toggle-icon" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </button>
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-sm">
-          <label class="flex items-center cursor-pointer select-none text-gray-700 dark:text-gray-300">
-            <input id="remember-me" name="remember-me" type="checkbox"
-                   class="h-4 w-4 text-crypto-blue border-gray-300 rounded focus:ring-crypto-blue">
-            <span class="ml-2">Remember me</span>
-          </label>
+        <label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+          <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500/40 dark:border-slate-600 dark:bg-slate-900">
+          Keep me signed in
+        </label>
 
-          <a href="#" class="font-semibold text-crypto-blue hover:underline hover:text-blue-500 transition">
-            Forgot password?
-          </a>
-        </div>
-
-        <button id="login-btn" type="submit"
-                class="relative w-full flex justify-center items-center py-3 px-4 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-crypto-blue to-blue-600 shadow-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-crypto-blue transition-all duration-200">
-          <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-            <svg class="w-5 h-5 text-white animate-pulse" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M2.003 9.25C2.003 5.53 
-                       5.503 2 9.25 2s7.247 3.53 
-                       7.247 7.25c0 1.56-.52 3-1.397 
-                       4.166L9.25 18l-5.85-6.584A7.247 
-                       7.247 0 012.003 9.25z"/>
-            </svg>
-          </span>
+        <button id="login-btn" type="submit" class="btn btn-primary w-full">
           <span id="btn-text">Sign in</span>
-          <span id="btn-loader" class="hidden ml-2 border-2 border-white border-t-transparent rounded-full w-4 h-4 animate-spin"></span>
+          <span id="btn-loader" class="hidden h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>
         </button>
       </form>
+
+      <p class="mt-8 text-center text-xs text-slate-400">
+        Protected by industry-standard encryption.
+      </p>
     </div>
-  </main>
+  </section>
+</main>
 
-  <script>
-    function togglePassword() {
-      const input = document.getElementById("password");
-      const icon = document.getElementById("password-toggle-icon");
-      if (input.type === "password") {
-        input.type = "text";
-        icon.innerHTML = '<path d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.96 9.96 0 012.211-3.568M6.23 6.23A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.956 9.956 0 01-4.293 5.043M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2"/>';
-      } else {
-        input.type = "password";
-        icon.innerHTML = '<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268-2.943-9.542-7z"/>';
-      }
-    }
+<script>
+  function togglePassword() {
+    var input = document.getElementById('password');
+    var icon = document.getElementById('password-toggle-icon');
+    var show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    icon.innerHTML = show
+      ? '<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />'
+      : '<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />';
+  }
 
-    function showLoader(e) {
-      e.preventDefault();
-      const btn = document.getElementById("login-btn");
-      const text = document.getElementById("btn-text");
-      const loader = document.getElementById("btn-loader");
-      text.textContent = "Signing in...";
-      loader.classList.remove("hidden");
-      btn.disabled = true;
-      setTimeout(() => e.target.submit(), 1000);
-    }
-  </script>
-</bod
+  function submitLogin() {
+    var btn = document.getElementById('login-btn');
+    btn.disabled = true;
+    document.getElementById('btn-text').textContent = 'Signing in…';
+    document.getElementById('btn-loader').classList.remove('hidden');
+  }
+</script>
+</body>
+</html>
